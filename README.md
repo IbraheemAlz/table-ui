@@ -1,5 +1,7 @@
 # Headless React Data Table
 
+> **Note:** This project is currently in **Beta**. It is a fresh implementation and has not yet been battle-tested in production environments.
+
 A **hyper-lightweight**, professional-grade Data Table component for React.
 
 Designed to be copied directly into your project, it gives you complete control over your codebase without locking you into a heavy external library. It is built with **Tailwind CSS** and **TypeScript**, supporting **Next.js**, **Vite**, **Remix**, and any other React framework.
