@@ -92,6 +92,7 @@ export function useRowSelection({
 
     return {
         selectedRowIds: selectedIds,
+        setSelectedRowIds: updateSelection,
         toggleRowSelection,
         toggleAllRows,
         isRowSelected,

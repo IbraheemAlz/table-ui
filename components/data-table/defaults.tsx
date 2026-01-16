@@ -15,10 +15,11 @@ const MenuCloseContext = React.createContext<(() => void) | null>(null)
 const DefaultColumnMenu: DataTableSlots['ColumnMenu'] = ({ trigger, children, align = 'start' }) => {
     const [open, setOpen] = useState(false)
     const menuRef = useRef<HTMLDivElement>(null)
+    const triggerRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node) && !triggerRef.current?.contains(e.target as Node)) {
                 setOpen(false)
             }
         }
@@ -28,11 +29,20 @@ const DefaultColumnMenu: DataTableSlots['ColumnMenu'] = ({ trigger, children, al
         return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [open])
 
-    const closeMenu = useCallback(() => setOpen(false), [])
+    const closeMenu = useCallback(() => {
+        setOpen(false)
+        // Restore focus to trigger so keyboard shortcuts (Ctrl+Z) work immediately
+        triggerRef.current?.focus()
+    }, [])
 
     return (
         <div ref={menuRef} className="relative h-full" style={{ zIndex: open ? 9999 : undefined }}>
-            <div onClick={() => setOpen(!open)} className="cursor-pointer h-full">
+            <div
+                ref={triggerRef}
+                tabIndex={0}
+                onClick={() => setOpen(!open)}
+                className="cursor-pointer h-full outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500 rounded-sm"
+            >
                 {trigger}
             </div>
             {open && (

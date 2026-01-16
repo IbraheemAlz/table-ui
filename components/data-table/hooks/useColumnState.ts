@@ -110,6 +110,15 @@ export function useColumnState({ columns, initialView, onViewChange }: UseColumn
         })
     }, [notifyChange])
 
+    // Set absolute column order (for Undo/Redo)
+    const setColumnOrder = useCallback((newOrder: string[]) => {
+        setState(prev => {
+            const newState = { ...prev, order: newOrder }
+            notifyChange(newState)
+            return newState
+        })
+    }, [notifyChange])
+
     // Get visible columns in order
     const visibleColumns = useMemo(() => {
         return state.order
@@ -179,6 +188,7 @@ export function useColumnState({ columns, initialView, onViewChange }: UseColumn
         setColumnWidth,
         toggleColumnPin,
         moveColumn,
+        setColumnOrder,
         getColumnWidth,
         getColumnPinning,
         getViewState,

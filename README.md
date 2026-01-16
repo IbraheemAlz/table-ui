@@ -24,7 +24,27 @@ Designed to be copied directly into your project, it gives you complete control 
     *   Toggleable Grid Lines
     *   Striped Rows
     *   Adjustable Row Density (`short`, `medium`, `tall`)
+*   **Unified Undo/Redo System**:
+    *   Full history support for **Selection**, **Column Resizing**, **Pinning**, **Ordering**, and **Visibility**.
+    *   Robust **Ctrl+Z** / **Ctrl+Shift+Z** support (International Keyboard Ready 🌍).
+    *   Smart Focus Management: Focus snaps back to table after actions, enabling immediate undo.
+*   **Keyboard Navigation**:
+    *   Arrow Key Navigation (Excel-style).
+    *   `Space` to select rows.
+    *   `Shift + Arrow` for range selection.
+    *   `Escape` to clear selection.
 *   **Slot Architecture**: Replace any internal component (buttons, checkboxes, inputs) with your own design system (e.g., Shadcn UI).
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+| :--- | :--- |
+| **Ctrl + Z** | Undo last action (Selection, Layout, etc.) |
+| **Ctrl + Shift + Z** | Redo last action |
+| **Arrow Keys** | Navigate focus between rows |
+| **Space** | Select / Deselect focused row |
+| **Shift + Up/Down** | Select range of rows |
+| **Escape** | Clear all selections |
 
 ## 📦 Installation
 

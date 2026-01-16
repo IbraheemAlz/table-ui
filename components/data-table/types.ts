@@ -114,12 +114,18 @@ export interface DataTableSlots {
     Tbody?: React.FC<{
         children: React.ReactNode
         className?: string
+        tabIndex?: number
+        onFocus?: React.FocusEventHandler
+        style?: React.CSSProperties
     }>
     Tr?: React.FC<{
         children: React.ReactNode
         onClick?: () => void
         className?: string
         'data-selected'?: boolean
+        tabIndex?: number
+        onKeyDown?: React.KeyboardEventHandler
+        ref?: React.Ref<any>
     }>
     Th?: React.FC<{
         children: React.ReactNode

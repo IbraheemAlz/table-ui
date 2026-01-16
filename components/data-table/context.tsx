@@ -30,6 +30,7 @@ interface DataTableContextValue<T = any> {
 
     // Row selection
     selectedRowIds: Set<string>
+    setSelectedRowIds: (ids: Set<string>) => void
     toggleRowSelection: (rowId: string) => void
     toggleAllRows: (selected: boolean) => void
     isRowSelected: (rowId: string) => boolean
@@ -46,6 +47,7 @@ interface DataTableContextValue<T = any> {
     stripedRows?: boolean
     showGridLines?: boolean
     direction: 'ltr' | 'rtl'
+    focusTable: () => void
 }
 
 // ============================================================================

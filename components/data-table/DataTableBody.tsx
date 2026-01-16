@@ -5,7 +5,9 @@ import { useDataTable } from './context'
 import { cn } from './utils/cn'
 import { Z_INDEX } from './types'
 
-export function DataTableBody() {
+import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
+
+export function DataTableBody<T>() {
     const {
         columns,
         orderedColumns,
@@ -13,16 +15,29 @@ export function DataTableBody() {
         slots,
         pinningOffsets,
         serverData,
+        direction,
+        rowDensity,
+        stripedRows,
+        showGridLines,
         enableRowSelection,
         selectionMode,
         selectedRowIds,
+        setSelectedRowIds,
         toggleRowSelection,
         getRowId,
-        rowDensity,
-        stripedRows,
-        direction,
-        showGridLines,
     } = useDataTable()
+
+    const {
+        focusedRowIndex,
+        handleKeyDown,
+        handleRowClick,
+        rowRefs
+    } = useKeyboardNavigation({
+        data: serverData.data,
+        selectedRowIds: Array.from(selectedRowIds), // Convert Set to Array
+        onSelectionChange: (ids) => setSelectedRowIds(new Set(ids)), // Convert Array to Set
+        getRowId
+    })
 
     const isRTL = direction === 'rtl'
 
@@ -82,22 +97,44 @@ export function DataTableBody() {
     }
 
     return (
-        <Tbody className={cn(serverData.isRefetching && "opacity-60 pointer-events-none")}>
+        <Tbody
+            tabIndex={focusedRowIndex === null ? 0 : -1} // Roving TabIndex entry point
+            onFocus={() => {
+                // If focusing the body (not a row), focus the first row or last known
+                if (focusedRowIndex === null) {
+                    handleRowClick(0)
+                }
+            }}
+            className={cn(
+                '[&_tr:last-child]:border-0',
+                serverData.isRefetching && "opacity-60 pointer-events-none"
+            )}
+        >
             {serverData.data.map((row, rowIndex) => {
                 const rowId = getRowId(row)
                 const isSelected = selectedRowIds.has(rowId)
+                const isFocused = focusedRowIndex === rowIndex
 
                 return (
                     <Tr
                         key={rowId}
-                        onClick={() => toggleRowSelection(rowId)}
-                        data-selected={isSelected}
+                        ref={(el: any) => { rowRefs.current[rowIndex] = el }}
+                        data-state={isSelected ? 'selected' : undefined}
+                        tabIndex={isFocused ? 0 : -1}
+                        onKeyDown={(e: any) => handleKeyDown(e, rowIndex)}
+                        onClick={() => {
+                            if (!enableRowSelection) return
+                            handleRowClick(rowIndex)
+                            // Toggle selection on click if enabled
+                            if (selectionMode === 'multiple' || selectionMode === 'single') {
+                                toggleRowSelection(rowId)
+                            }
+                        }}
                         className={cn(
-                            "border-b border-gray-200 last:border-b-0 transition-colors",
-                            "hover:bg-gray-50 cursor-pointer",
-                            isSelected
-                                ? "bg-blue-50 hover:bg-blue-100"
-                                : stripedRows && "odd:bg-white even:bg-gray-50"
+                            'border-b transition-colors hover:bg-gray-50/50 data-[state=selected]:bg-gray-50',
+                            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset', // Visual focus ring
+                            stripedRows && rowIndex % 2 !== 0 && 'bg-gray-50/50',
+                            stripedRows && rowIndex % 2 !== 0 && isSelected && 'bg-gray-100'
                         )}
                     >
                         {/* Selection checkbox / Row Number */}
@@ -164,7 +201,7 @@ export function DataTableBody() {
 
                             // Render cell content
                             const content = column.cell
-                                ? column.cell({ value, row, rowIndex })
+                                ? column.cell({ value, row: row, rowIndex })
                                 : value !== null && value !== undefined
                                     ? String(value)
                                     : <span className="text-gray-400">—</span>

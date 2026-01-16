@@ -18,6 +18,7 @@ export function ColumnMenu({ column, align = 'start' }: ColumnMenuProps) {
         setColumnVisibility,
         toggleColumnPin,
         moveColumn,
+        focusTable,
     } = useDataTable()
 
     const { ColumnMenu: Menu, MenuItem, MenuSeparator } = slots
@@ -132,7 +133,10 @@ export function ColumnMenu({ column, align = 'start' }: ColumnMenuProps) {
             {/* Hide */}
             {canHide && (
                 <MenuItem
-                    onClick={() => setColumnVisibility(column.id, false)}
+                    onClick={() => {
+                        setColumnVisibility(column.id, false)
+                        focusTable() // Restore focus to table since this column will disappear
+                    }}
                     icon={<Icons.EyeOff className="h-4 w-4" />}
                 >
                     Hide column
