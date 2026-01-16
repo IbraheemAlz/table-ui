@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Headless React Data Table
 
-## Getting Started
+A **hyper-lightweight**, professional-grade Data Table component for React.
 
-First, run the development server:
+Designed to be copied directly into your project, it gives you complete control over your codebase without locking you into a heavy external library. It is built with **Tailwind CSS** and **TypeScript**, supporting **Next.js**, **Vite**, **Remix**, and any other React framework.
+
+## ⚡️ Key Features
+
+*   **Zero "Heavy" Dependencies**: No HeroUI, No Material UI, No Framer Motion. Just standard React.
+*   **Fully Type-Safe**: Extensive TypeScript support for columns, rows, and customizations.
+*   **Ready-to-Use Examples**: Check the `examples/` folder for copy-pasteable templates (`Basic`, `Advanced`, `Interactive`).
+*   **Advanced Layouts**:
+    *   Right-to-Left (RTL) Support 🇸🇦
+    *   Column Pinning (Left & Right)
+    *   Column Resizing
+    *   Sticky Headers
+*   **Rich Interactions**:
+    *   Row Selection (Single/Multi) with **Floating Action Bar**
+    *   Server-Side Pagination & Sorting support
+    *   Column Visibility Toggles
+*   **Visual Customization**:
+    *   Toggleable Grid Lines
+    *   Striped Rows
+    *   Adjustable Row Density (`short`, `medium`, `tall`)
+*   **Slot Architecture**: Replace any internal component (buttons, checkboxes, inputs) with your own design system (e.g., Shadcn UI).
+
+## 📦 Installation
+
+This component follows the "Copy & Paste" philosophy (like shadcn/ui).
+
+### 1. Install Utilities
+We rely on two tiny, industry-standard utilities for class merging.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install clsx tailwind-merge
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Copy Source
+Copy the `components/data-table` directory into your project:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+src/
+  components/
+    data-table/  <-- Copy this folder
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🛠 Framework Integration
 
-To learn more about Next.js, take a look at the following resources:
+### Next.js (App Router)
+1.  Ensure **Tailwind CSS** is configured.
+2.  Copy the folder to `components/data-table`.
+3.  Import and use:
+    ```tsx
+    import { DataTable } from '@/components/data-table'
+    ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Vite / React
+1.  Ensure **Tailwind CSS** is configured.
+2.  Copy the folder to `src/components/data-table`.
+3.  Import and use:
+    ```tsx
+    import { DataTable } from './components/data-table'
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Remix / Astro / Others
+As long as you have **React** and **Tailwind CSS** set up, this component will work out of the box.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🚀 Quick Start
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```tsx
+import { DataTable, type ColumnDef } from '@/components/data-table'
+
+// 1. Define Columns
+type User = { id: string; name: string; role: string }
+
+const columns: ColumnDef<User>[] = [
+  { id: 'name', header: 'Name', accessorKey: 'name' },
+  { id: 'role', header: 'Role', accessorKey: 'role' },
+]
+
+// 2. Use Component
+export default function UserTable() {
+    const data = [{ id: '1', name: 'John Doe', role: 'Admin' }]
+
+    return (
+        <DataTable
+            columns={columns}
+            serverData={{
+                data: data,
+                totalCount: 1,
+                page: 1,
+                pageSize: 10,
+                onPageChange: () => {},
+                onPageSizeChange: () => {},
+                onSortChange: () => {}
+            }}
+            getRowId={(row) => row.id}
+            rowDensity="medium"
+            showGridLines={true}
+            stripedRows={true}
+        />
+    )
+}
+```
+
+## 🧩 Slots (BYO Custom Components)
+
+Want to use your own **UI Library** (like Shadcn, Chakra, or custom HTML)? Use `slots`:
+
+```tsx
+<DataTable
+    // ...
+    slots={{
+        // Replace default checkbox with your own
+        Checkbox: ({ checked, onChange }) => (
+            <MyCustomCheckbox isChecked={checked} onToggle={onChange} />
+        ),
+        // Replace default buttons
+        Button: ({ children, onClick, variant }) => (
+            <MyLibraryButton variant={variant} onClick={onClick}>
+                {children}
+            </MyLibraryButton>
+        )
+    }}
+/>
+```
+
+## 📂 File Structure
+
+The project may contain an `examples/` folder, but you only need to copy `components/data-table`.
+
+*   **`components/data-table/`** (The Core Library) -> **COPY THIS**
+    *   `index.ts`: Main export.
+    *   `DataTable.tsx`: Core logic.
+    *   `hooks/`: Interaction logic.
+    *   `icons.tsx`: Lightweight SVG icons.
+*   **`examples/`** (Reference Impls) -> **DON'T COPY (unless needed)**
+    *   `BasicTableDemo.tsx`: Simple usage.
+    *   `RTLComplexTableDemo.tsx`: Advanced config.
+    *   `InteractiveTableDemo.tsx`: Selection & Actions.
+
+---
+*Built for performance and flexibility.*
