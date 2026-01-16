@@ -13,9 +13,10 @@ export function DataTableCardView() {
         selectedRowIds,
         toggleRowSelection,
         getRowId,
+        enableRowSelection,
     } = useDataTable()
 
-    const { Card, Skeleton } = slots
+    const { Card, Skeleton, Checkbox } = slots
 
     // Get visible columns
     const visibleColumns = columnState.order
@@ -71,11 +72,31 @@ export function DataTableCardView() {
                         key={rowId}
                         onClick={() => toggleRowSelection(rowId)}
                         className={cn(
-                            "transition-all",
-                            isSelected && "ring-2 ring-blue-500 bg-blue-50"
+                            "transition-all relative overflow-hidden",
+                            isSelected && "ring-2 ring-blue-500 bg-blue-50/50"
                         )}
                     >
+                        {/* Selection Strip (Design Accent) */}
+                        {isSelected && (
+                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />
+                        )}
+
                         <div className="space-y-3">
+                            {/* Header Row: Checkbox + Primary Logic could go here, but let's keep it simple */}
+                            {enableRowSelection && (
+                                <div className="flex items-center gap-3 pb-3 border-b border-gray-100 mb-3 -mx-2 px-2">
+                                    <div onClick={(e) => e.stopPropagation()}>
+                                        <Checkbox
+                                            checked={isSelected}
+                                            onChange={() => toggleRowSelection(rowId)}
+                                        />
+                                    </div>
+                                    <span className={cn("text-sm font-medium", isSelected ? "text-blue-700" : "text-gray-500")}>
+                                        {isSelected ? "Selected" : "Select Row"}
+                                    </span>
+                                </div>
+                            )}
+
                             {visibleColumns.map((column) => {
                                 // Get cell value
                                 let value: unknown
@@ -97,11 +118,11 @@ export function DataTableCardView() {
                                     : column.id.replace(/_/g, ' ')
 
                                 return (
-                                    <div key={column.id} className="flex justify-between items-start gap-4">
-                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider shrink-0">
+                                    <div key={column.id} className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-4">
+                                        <span className="text-xs font-medium text-gray-500 uppercase tracking-wider shrink-0 mt-1">
                                             {headerText}
                                         </span>
-                                        <span className="text-sm text-gray-900 text-right">
+                                        <span className="text-sm text-gray-900 text-left sm:text-right break-words">
                                             {content}
                                         </span>
                                     </div>

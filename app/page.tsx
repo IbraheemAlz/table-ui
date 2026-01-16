@@ -21,8 +21,8 @@ export default function DemoPage() {
         </div>
 
         {/* Tabs */}
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+        <div className="border-b border-gray-200 overflow-hidden">
+          <nav className="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
             <button
               onClick={() => setActiveTab('basic')}
               className={`
