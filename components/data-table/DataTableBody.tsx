@@ -81,7 +81,7 @@ export function DataTableBody<T>() {
                     <td colSpan={colSpan} className="py-16 text-center">
                         <div className="flex flex-col items-center gap-3">
                             <div className="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center">
-                                <svg className="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <svg className="h-7 w-7 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                                 </svg>
                             </div>
@@ -153,7 +153,7 @@ export function DataTableBody<T>() {
                                     {/* Number - hidden on hover or if selected */}
                                     <span
                                         className={cn(
-                                            "text-xs text-gray-400 font-medium transition-opacity",
+                                            "text-xs text-gray-500 font-medium transition-opacity",
                                             (isSelected) ? "opacity-0" : "group-hover:opacity-0"
                                         )}
                                     >
@@ -204,7 +204,7 @@ export function DataTableBody<T>() {
                                 ? column.cell({ value, row: row, rowIndex })
                                 : value !== null && value !== undefined
                                     ? String(value)
-                                    : <span className="text-gray-400">—</span>
+                                    : <span className="text-gray-500">—</span>
 
                             const style: React.CSSProperties = {
                                 width: width ?? column.size ?? 150,

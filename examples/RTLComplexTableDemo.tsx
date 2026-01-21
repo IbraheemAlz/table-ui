@@ -70,7 +70,7 @@ export function RTLComplexTableDemo() {
                 <h3>2. Advanced Layout & RTL</h3>
                 <p className="text-gray-600 text-sm">
                     Demonstrates Right-to-Left support, row density, striped rows, and column pinning.
-                    Notice how "Full Name" pinned to the left moves to the right in RTL mode.
+                    Notice how -Full Name- pinned to the left moves to the right in RTL mode.
                 </p>
             </div>
 
@@ -123,7 +123,7 @@ export function RTLComplexTableDemo() {
                 </label>
             </div>
 
-            <div className="border rounded-lg shadow-sm bg-white overflow-hidden" dir={direction}>
+            <div className="rounded-lg shadow-sm bg-white overflow-hidden" dir={direction}>
                 <DataTable
                     columns={columns}
                     serverData={serverData}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { DataTable, type ColumnDef, type ServerDataConfig } from '@/components/data-table'
 
 // Simplified User type
@@ -25,6 +25,7 @@ function generateUsers(count: number): User[] {
 
 const allUsers = generateUsers(50)
 
+// set columns headers
 const columns: ColumnDef<User>[] = [
     { id: 'name', header: 'Name', accessorKey: 'name', size: 180 },
     { id: 'email', header: 'Email', accessorKey: 'email', size: 220 },
@@ -51,7 +52,7 @@ export function BasicTableDemo() {
 
     // Client-side processing
     const processedData = useMemo(() => {
-        let data = [...allUsers]
+        const data = [...allUsers]
         if (sortColumn && sortDirection) {
             data.sort((a, b) => {
                 const aVal = a[sortColumn as keyof User]
@@ -90,7 +91,7 @@ export function BasicTableDemo() {
                     Ideal for simple data management lists.
                 </p>
             </div>
-            <div className="border rounded-lg shadow-sm bg-white overflow-hidden">
+            <div className="rounded-lg shadow-sm bg-white overflow-hidden">
                 <DataTable
                     columns={columns}
                     serverData={serverData}

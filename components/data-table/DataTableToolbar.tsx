@@ -32,7 +32,7 @@ export function DataTableToolbar() {
             {/* Left side: Search */}
             <div className="flex flex-1 items-center gap-2">
                 <div className="relative w-[250px]">
-                    <Icons.Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Icons.Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                     <input
                         type="text"
                         placeholder="Search..."

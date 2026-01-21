@@ -125,7 +125,7 @@ export function InteractiveTableDemo() {
                 </button>
             </FloatingActionBar>
 
-            <div className="border rounded-lg shadow-sm bg-white overflow-hidden">
+            <div className="rounded-lg shadow-sm bg-white overflow-hidden">
                 <DataTable
                     columns={columns}
                     serverData={serverData}
