@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useEffect, useCallback, useRef } from 'react'
-import { DataTableProvider, mergeSlots } from './context'
+import { DataTableProvider, mergeSlots } from '../../lib/context/context'
 import { DataTableHeader } from './DataTableHeader'
 import { DataTableBody } from './DataTableBody'
 import { DataTablePagination } from './DataTablePagination'
@@ -137,6 +137,17 @@ export function DataTable<T>({
         }
     })
 
+    // Wrapper getRowId to handle index fallback
+    const wrappedGetRowId = useMemo(() => {
+        return (row: T) => {
+            try {
+                return getRowId(row)
+            } catch {
+                return String(serverData.data.indexOf(row))
+            }
+        }
+    }, [getRowId, serverData.data])
+
     // --- Action Interceptors ---
     const handleColumnVisibility = useCallback((colId: string, visible: boolean) => {
         const current = columnState.visibility[colId] ?? true
@@ -234,18 +245,6 @@ export function DataTable<T>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedRowIds, serverData.data, rawToggleAllRows, history])
 
-
-    // Wrapper getRowId to handle index fallback
-    const wrappedGetRowId = useMemo(() => {
-        return (row: T) => {
-            try {
-                return getRowId(row)
-            } catch {
-                return String(serverData.data.indexOf(row))
-            }
-        }
-    }, [getRowId, serverData.data])
-
     // Context value
     const contextValue = useMemo(() => ({
         columns,
@@ -294,7 +293,6 @@ export function DataTable<T>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serverData.page, serverData.pageSize, serverData.sortColumn, serverData.sortDirection])
 
-
     return (
         <DataTableProvider value={finalContextValue}>
             <div
@@ -325,28 +323,6 @@ export function DataTable<T>({
             >
                 {/* Toolbar - hidden in card view */}
                 {!isCardView && <DataTableToolbar />}
-
-                {/* Mobile search in card view */}
-                {isCardView && (
-                    <div className="relative">
-                        <svg
-
-                            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            defaultValue={serverData.searchQuery}
-                            onChange={(e) => serverData.onSearchChange?.(e.target.value)}
-                            className="h-10 w-full rounded-md border border-gray-200 bg-white pl-10 pr-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                        />
-                    </div>
-                )}
 
                 {/* Card View (Mobile) or Table View (Desktop) */}
                 {isCardView ? (

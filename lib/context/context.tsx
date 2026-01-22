@@ -1,13 +1,14 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import type { ColumnDef, DataTableSlots, ColumnState, PinningOffsets, ServerDataConfig, RowHeight } from '../../lib/types/customized-table'
-import { defaultSlots } from './defaults'
+import type { ColumnDef, DataTableSlots, ColumnState, PinningOffsets, ServerDataConfig, RowHeight } from '../types/customized-table'
+import { defaultSlots } from '../../components/data-table/defaults'
 
 // ============================================================================
 // Context Types
 // ============================================================================
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface DataTableContextValue<T = any> {
     // Column definitions
     columns: ColumnDef<T>[]
@@ -70,6 +71,7 @@ export function DataTableProvider<T>({
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useDataTable<T = any>(): DataTableContextValue<T> {
     const context = useContext(DataTableContext)
     if (!context) {

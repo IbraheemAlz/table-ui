@@ -1,4 +1,4 @@
-# DataTable Props:
+# 1️⃣DataTable Props:
 
 ```ts
 export interface DataTableProps<T> {
@@ -303,4 +303,72 @@ Callback when row is clicked
 
 Custom card renderer for mobile view
 
-# DataTable Custom hook & helpers:
+# 2️⃣DataTable Components
+
+## 1. DataTableToolbar:
+
+the top section above the actual table, consist of rows count & Selection info and Column visibility (hidden in card view)
+
+## 2. DataTableCardView:
+
+Card View (Mobile)
+
+## 3. DataTableHeader
+
+## 4. ResizeHandle (for DataTableHeader):
+
+columns resize
+
+## 5. ColumnMenu (for DataTableHeader):
+
+columns settings
+
+## 6. DataTableBody
+
+## 7. DataTablePagination:
+
+pagination footer
+
+## 8. defaults:
+
+the default components if the user didn't pass something custom (from there we are takign the current table and its tags).
+
+# 3️⃣DataTable Custom hook & helpers
+
+## context
+
+to share the logic of Column data, Column actions, Selection, Server data, Config, Utilities.
+
+## Custom hooks
+
+### 1. useColumnState:
+
+manage all column-related state:
+
+`columnState`, `orderedColumns`, `setColumnVisibility`, `setColumnWidth`, `toggleColumnPin`, `moveColumn`, `setColumnOrder`, `getColumnWidth`, `getColumnPinning`
+
+### 2. usePinningOffsets:
+
+calculate the CSS positioning offsets for pinned (sticky) columns.
+
+### 3. useRowSelection:
+
+manage row selection state for the table. It supports both controlled and uncontrolled patterns: Single/Multiple mode, Controlled/Uncontrolled and Callback support:
+
+`selectedRowIds`, `setSelectedRowIds`, `toggleRowSelection`, `toggleAllRows`, `isRowSelected`, `isAllSelected`, `isSomeSelected`, `clearSelection`, `selectedCount`,
+
+### 4. useHistory:
+
+is an undo/redo state machine that tracks actions for time-travel functionality (ctrl+z & ctrl+shift+z)
+
+### 5. useColumnResize (for DataTableHeader)
+
+### 6. useKeyboardNavigation (for DataTableBody)
+
+# 4️⃣examples
+
+## BasicTableDemo
+
+## RTLComplexTableDemo
+
+## InteractiveTableDemo

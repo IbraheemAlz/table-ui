@@ -1,15 +1,15 @@
 'use client'
 
 import React from 'react'
-import { useDataTable } from './context'
+import { useDataTable } from '../../lib/context/context'
 import { cn } from '../../lib/utils/cn'
 import { Z_INDEX } from '../../lib/types/customized-table'
 
 import { useKeyboardNavigation } from './hooks/customized-table/useKeyboardNavigation'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function DataTableBody<T>() {
     const {
-        columns,
         orderedColumns,
         columnState,
         slots,
@@ -118,9 +118,11 @@ export function DataTableBody<T>() {
                 return (
                     <Tr
                         key={rowId}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         ref={(el: any) => { rowRefs.current[rowIndex] = el }}
                         data-state={isSelected ? 'selected' : undefined}
                         tabIndex={isFocused ? 0 : -1}
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         onKeyDown={(e: any) => handleKeyDown(e, rowIndex)}
                         onClick={() => {
                             if (!enableRowSelection) return
@@ -196,6 +198,7 @@ export function DataTableBody<T>() {
                             if (column.accessorFn) {
                                 value = column.accessorFn(row)
                             } else if (column.accessorKey) {
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                 value = (row as any)[column.accessorKey]
                             }
 

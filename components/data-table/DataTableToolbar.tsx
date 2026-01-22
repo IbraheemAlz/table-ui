@@ -1,9 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
 import { Icon } from '@iconify/react'
-import { useDataTable } from './context'
-import { cn } from '../../lib/utils/cn'
+import { useDataTable } from '../../lib/context/context'
 
 export function DataTableToolbar() {
     const {
@@ -12,35 +10,23 @@ export function DataTableToolbar() {
         slots,
         serverData,
         setColumnVisibility,
+        selectedRowIds
     } = useDataTable()
 
-    const { Button, Popover, Input, Checkbox } = slots
-
-    const [searchValue, setSearchValue] = useState(serverData.searchQuery ?? '')
-
-    // Handle search with debounce would be ideal, but keeping it simple for now
-    const handleSearchChange = (value: string) => {
-        setSearchValue(value)
-        serverData.onSearchChange?.(value)
-    }
+    const { Button, Popover } = slots
 
     // Count hidden columns
     const hiddenColumnsCount = Object.values(columnState.visibility).filter(v => v === false).length
 
     return (
-        <div className="flex items-center justify-between gap-4 py-2 relative" style={{ zIndex: 200 }}>
-            {/* Left side: Search */}
-            <div className="flex flex-1 items-center gap-2">
-                <div className="relative w-[250px]">
-                    <Icon icon="lucide:search" className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchValue}
-                        onChange={(e) => handleSearchChange(e.target.value)}
-                        className="h-9 w-full rounded-md border border-gray-300 bg-white pl-9 pr-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                    />
-                </div>
+        <div className="flex items-center justify-between gap-4 px-4 pt-2 relative" style={{ zIndex: 200 }}>
+            {/* Left side: rows count & Selection info */}
+            <div className="text-sm text-gray-500">
+                {selectedRowIds.size > 0 ? (
+                    <span>{selectedRowIds.size} row(s) selected</span>
+                ) : (
+                    <span>{serverData?.totalCount} total row(s)</span>
+                )}
             </div>
 
             {/* Right side: Column visibility */}

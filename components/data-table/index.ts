@@ -20,7 +20,7 @@ export { usePinningOffsets } from './hooks/customized-table/usePinningOffsets'
 export { useColumnResize } from './hooks/customized-table/useColumnResize'
 
 // Context (for building custom components)
-export { useDataTable, DataTableProvider } from './context'
+export { useDataTable, DataTableProvider } from '../../lib/context/context'
 
 // Default slots (for reference when building custom slots)
 export { defaultSlots } from './defaults'

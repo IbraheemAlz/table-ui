@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { useDataTable } from './context'
+import { useDataTable } from '../../lib/context/context'
 import { ColumnMenu } from './ColumnMenu'
 import { ResizeHandle } from './ResizeHandle'
 import { useColumnResize } from './hooks/customized-table/useColumnResize'
@@ -10,7 +10,6 @@ import { Z_INDEX } from '../../lib/types/customized-table'
 
 export function DataTableHeader() {
     const {
-        columns,
         orderedColumns,
         columnState,
         slots,
@@ -105,6 +104,7 @@ function HeaderCell({
     onWidthChange,
     isRTL,
 }: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     column: any
     width?: number
     pinning: 'left' | 'right' | null

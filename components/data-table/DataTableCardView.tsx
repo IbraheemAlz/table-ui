@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { useDataTable } from './context'
+import { useDataTable } from '../../lib/context/context'
 import { cn } from '../../lib/utils/cn'
 
 export function DataTableCardView() {
@@ -103,6 +103,7 @@ export function DataTableCardView() {
                                 if (column.accessorFn) {
                                     value = column.accessorFn(row)
                                 } else if (column.accessorKey) {
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     value = (row as any)[column.accessorKey]
                                 }
 

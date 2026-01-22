@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { DataTable, FloatingActionBar, type ColumnDef, type ServerDataConfig } from '@/components/data-table'
 
 interface Product {

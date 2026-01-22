@@ -1,9 +1,7 @@
 'use client'
 
-import React from 'react'
 import { Icon } from '@iconify/react'
-import { useDataTable } from './context'
-import type { ColumnDef } from '../../lib/types/customized-table'
+import { useDataTable } from '../../lib/context/context'
 
 interface ColumnMenuProps {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
