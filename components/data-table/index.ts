@@ -11,14 +11,13 @@ export type {
     DataTableProps,
     DataTableSlots,
     RowHeight,
-} from './types'
+} from '../../lib/types/customized-table'
 
 // Hooks (for advanced usage)
-export { useColumnState } from './hooks/useColumnState'
-export { useRowSelection } from './hooks/useRowSelection'
-export { usePinningOffsets } from './hooks/usePinningOffsets'
-export { useResizeObserver } from './hooks/useResizeObserver'
-export { useColumnResize } from './hooks/useColumnResize'
+export { useColumnState } from './hooks/customized-table/useColumnState'
+export { useRowSelection } from './hooks/customized-table/useRowSelection'
+export { usePinningOffsets } from './hooks/customized-table/usePinningOffsets'
+export { useColumnResize } from './hooks/customized-table/useColumnResize'
 
 // Context (for building custom components)
 export { useDataTable, DataTableProvider } from './context'
@@ -27,4 +26,4 @@ export { useDataTable, DataTableProvider } from './context'
 export { defaultSlots } from './defaults'
 
 // Utility
-export { cn } from './utils/cn'
+export { cn } from '../../lib/utils/cn'

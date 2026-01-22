@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo } from 'react'
-import type { ColumnState, PinningOffsets } from '../types'
+import type { ColumnState, PinningOffsets } from '../../../../lib/types/customized-table'
 
 interface UsePinningOffsetsProps {
     columnState: ColumnState

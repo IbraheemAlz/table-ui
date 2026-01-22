@@ -2,10 +2,10 @@
 
 import React from 'react'
 import { useDataTable } from './context'
-import { cn } from './utils/cn'
-import { Z_INDEX } from './types'
+import { cn } from '../../lib/utils/cn'
+import { Z_INDEX } from '../../lib/types/customized-table'
 
-import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
+import { useKeyboardNavigation } from './hooks/customized-table/useKeyboardNavigation'
 
 export function DataTableBody<T>() {
     const {

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { useDataTable } from './context'
-import type { ColumnDef } from './types'
+import type { ColumnDef } from '../../lib/types/customized-table'
 import { Icons } from './icons'
 
 interface ColumnMenuProps {

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useDataTable } from './context'
-import { cn } from './utils/cn'
+import { cn } from '../../lib/utils/cn'
 import { Icons } from './icons'
 
 export function DataTableToolbar() {

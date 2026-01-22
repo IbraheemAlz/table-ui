@@ -1,35 +1,25 @@
 'use client'
 
-import React, { useMemo, useEffect, useCallback } from 'react'
+import { useMemo, useEffect, useCallback, useRef } from 'react'
 import { DataTableProvider, mergeSlots } from './context'
 import { DataTableHeader } from './DataTableHeader'
 import { DataTableBody } from './DataTableBody'
 import { DataTablePagination } from './DataTablePagination'
 import { DataTableToolbar } from './DataTableToolbar'
 import { DataTableCardView } from './DataTableCardView'
-import { useColumnState } from './hooks/useColumnState'
-import { usePinningOffsets } from './hooks/usePinningOffsets'
-import { useRowSelection } from './hooks/useRowSelection'
-import { useResizeObserver } from './hooks/useResizeObserver'
-import { cn } from './utils/cn'
-import type { DataTableProps, DataTableSlots } from './types'
-
-import { useHistory } from './hooks/useHistory'
-
-// ... imports ...
-
-// Define Action Types for History
-type HistoryAction =
-    | { type: 'SELECTION'; prev: string[]; next: string[] }
-    | { type: 'PIN'; colId: string; prev: 'left' | 'right' | false; next: 'left' | 'right' | false }
-    | { type: 'VISIBILITY'; colId: string; prev: boolean; next: boolean }
-    | { type: 'ORDER'; prev: string[]; next: string[] }
-    | { type: 'RESIZE'; colId: string; prev: number; next: number }
+import { useColumnState } from './hooks/customized-table/useColumnState'
+import { usePinningOffsets } from './hooks/customized-table/usePinningOffsets'
+import { useRowSelection } from './hooks/customized-table/useRowSelection'
+import { useWindowSize } from './hooks/customized-table/useWindowSize'
+import { cn } from '../../lib/utils/cn'
+import type { DataTableProps, HistoryAction } from '../../lib/types/customized-table'
+import { useHistory } from './hooks/customized-table/useHistory'
 
 export function DataTable<T>({
-    columns,
     serverData,
+    columns,
     getRowId,
+    pageSizeOptions = [10, 20, 50, 100],
     slots: customSlots,
     initialView,
     onViewChange,
@@ -39,21 +29,27 @@ export function DataTable<T>({
     onSelectionChange,
     className,
     mobileBreakpoint = 640,
-    pageSizeOptions = [10, 20, 50, 100],
     stickyHeader = true,
     rowDensity = 'medium',
     stripedRows = false,
     showGridLines = false,
     direction = 'ltr',
     onRowClick,
-    cardRenderer,
 }: DataTableProps<T>) {
     // Merge custom slots with defaults
     const slots = useMemo(() => mergeSlots(customSlots), [customSlots])
 
-    // Container resize detection
-    const { ref: containerRef, width: containerWidth } = useResizeObserver<HTMLDivElement>()
-    const isCardView = containerWidth > 0 && containerWidth < mobileBreakpoint
+    // Container ref for focus management
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    // Focus table container
+    const focusTable = useCallback(() => {
+        containerRef.current?.focus()
+    }, []);
+
+    // Window size detection for responsive card view
+    const { viewportWidth } = useWindowSize()
+    const isCardView = viewportWidth > 0 && viewportWidth < mobileBreakpoint
 
     // Raw Column State
     const {
@@ -66,7 +62,6 @@ export function DataTable<T>({
         setColumnOrder: rawSetColumnOrder,
         getColumnWidth,
         getColumnPinning,
-        getViewState,
     } = useColumnState({
         columns,
         initialView,
@@ -95,12 +90,6 @@ export function DataTable<T>({
     // ------------------------------------------------------------------------
     // HISTORY CONTROLLER
     // ------------------------------------------------------------------------
-
-    // Clear history when server data (page/sort) changes
-    useEffect(() => {
-        history.clear()
-    }, [serverData.page, serverData.pageSize, serverData.sortColumn, serverData.sortDirection])
-
     const history = useHistory<HistoryAction>({
         limit: 20, // Increased limit per recommendation
         onUndo: (action) => {
@@ -148,13 +137,7 @@ export function DataTable<T>({
         }
     })
 
-    // Focus table container
-    const focusTable = useCallback(() => {
-        containerRef.current?.focus()
-    }, [])
-
     // --- Action Interceptors ---
-
     const handleColumnVisibility = useCallback((colId: string, visible: boolean) => {
         const current = columnState.visibility[colId] ?? true
         history.record({ type: 'VISIBILITY', colId, prev: current, next: visible })
@@ -223,6 +206,7 @@ export function DataTable<T>({
             const row = serverData.data.find(r => wrappedGetRowId(r) === rowId)
             if (row) onRowClick(row)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedRowIds, rawToggleRowSelection, history, serverData.data, onRowClick])
 
     const handleToggleAllRows = useCallback((checked: boolean) => {
@@ -247,6 +231,7 @@ export function DataTable<T>({
 
         // Call raw
         rawToggleAllRows(checked, allIds)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedRowIds, serverData.data, rawToggleAllRows, history])
 
 
@@ -286,6 +271,7 @@ export function DataTable<T>({
         stripedRows,
         showGridLines,
         direction,
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }), [
         // Dependencies including history handlers...
         columns, columnState, handleColumnVisibility, handleSetColumnWidth, handleTogglePin,
@@ -301,6 +287,13 @@ export function DataTable<T>({
     }), [contextValue, focusTable])
 
     const { Table } = slots
+
+    // Clear history when server data (page/sort) changes
+    useEffect(() => {
+        history.clear()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [serverData.page, serverData.pageSize, serverData.sortColumn, serverData.sortDirection])
+
 
     return (
         <DataTableProvider value={finalContextValue}>
@@ -359,11 +352,11 @@ export function DataTable<T>({
                 {isCardView ? (
                     <DataTableCardView />
                 ) : (
-                    <div className="relative flex-1 rounded-md border border-gray-200 bg-white overflow-auto isolate min-h-[400px]">
+                    <div className="relative flex-1 rounded-md border border-gray-200 bg-white overflow-auto isolate min-h-100">
                         {/* Resize Guide Line */}
                         <div
                             id="table-resize-guide"
-                            className="absolute top-0 bottom-0 w-0.5 bg-blue-600 z-[9999] opacity-0 pointer-events-none transition-opacity duration-75"
+                            className="absolute top-0 bottom-0 w-0.5 bg-blue-600 z-9999 opacity-0 pointer-events-none transition-opacity duration-75"
                         />
                         <Table className="w-full h-full" style={{ tableLayout: 'fixed' }}>
                             <DataTableHeader />
@@ -374,7 +367,7 @@ export function DataTable<T>({
 
                 {/* Pagination */}
                 <div className="shrink-0">
-                    <DataTablePagination />
+                    <DataTablePagination pageSizeOptions={pageSizeOptions} />
                 </div>
             </div>
         </DataTableProvider>
