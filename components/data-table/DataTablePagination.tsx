@@ -1,9 +1,9 @@
 'use client'
 
 import React from 'react'
+import { Icon } from '@iconify/react'
 import { useDataTable } from './context'
 import { cn } from '../../lib/utils/cn'
-import { Icons } from './icons'
 
 interface DataTablePaginationProps {
     pageSizeOptions?: number[]
@@ -61,7 +61,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoPrevious}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronsLeft className="h-4 w-4" />
+                        <Icon icon="lucide:chevrons-left" className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
@@ -70,7 +70,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoPrevious}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronLeft className="h-4 w-4" />
+                        <Icon icon="lucide:chevron-left" className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
@@ -79,7 +79,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoNext}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronRight className="h-4 w-4" />
+                        <Icon icon="lucide:chevron-right" className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
@@ -88,7 +88,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoNext}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronsRight className="h-4 w-4" />
+                        <Icon icon="lucide:chevrons-right" className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

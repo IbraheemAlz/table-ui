@@ -1,9 +1,9 @@
 'use client'
 
 import React, { useState } from 'react'
+import { Icon } from '@iconify/react'
 import { useDataTable } from './context'
 import { cn } from '../../lib/utils/cn'
-import { Icons } from './icons'
 
 export function DataTableToolbar() {
     const {
@@ -32,7 +32,7 @@ export function DataTableToolbar() {
             {/* Left side: Search */}
             <div className="flex flex-1 items-center gap-2">
                 <div className="relative w-[250px]">
-                    <Icons.Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                    <Icon icon="lucide:search" className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                     <input
                         type="text"
                         placeholder="Search..."
@@ -48,7 +48,7 @@ export function DataTableToolbar() {
                 <Popover
                     trigger={
                         <Button variant="outline" size="sm" className="h-9 gap-1.5">
-                            <Icons.Columns className="h-4 w-4" />
+                            <Icon icon="lucide:columns-2" className="h-4 w-4" />
                             View
                             {hiddenColumnsCount > 0 && (
                                 <span className="ml-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs">
