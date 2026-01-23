@@ -256,9 +256,29 @@ export interface DataTableProps<T> {
   /** Layout direction (default: 'ltr') */
   direction?: "ltr" | "rtl";
 
+  // Visibility Controls
+  /** Show/hide the toolbar (search, filters, columns) (default: true) */
+  enableToolbar?: boolean;
+  /** Show/hide the bottom pagination bar (default: true) */
+  enablePagination?: boolean;
+  /** Hide pagination if total pages <= 1 (default: false) */
+  hidePaginationOnSinglePage?: boolean;
+
   // Events
   /** Callback when row is clicked */
   onRowClick?: (row: T) => void;
+
+  // Row Expansion
+  /** Enable row expansion to show nested content (default: false) */
+  enableRowExpansion?: boolean;
+  /** Render function for expanded content. Receives the row data and returns JSX */
+  renderExpandedRow?: (row: T) => React.ReactNode;
+  /** Currently expanded row IDs (controlled mode) */
+  expandedRowIds?: string[];
+  /** Callback when expansion state changes */
+  onExpandedChange?: (ids: string[]) => void;
+  /** Allow multiple rows expanded at once (default: true) */
+  allowMultipleExpanded?: boolean;
 
   // Mobile
   /** Custom card renderer for mobile view */
@@ -295,11 +315,11 @@ export const Z_INDEX = {
 export type HistoryAction =
   | { type: "SELECTION"; prev: string[]; next: string[] }
   | {
-      type: "PIN";
-      colId: string;
-      prev: "left" | "right" | false;
-      next: "left" | "right" | false;
-    }
+    type: "PIN";
+    colId: string;
+    prev: "left" | "right" | false;
+    next: "left" | "right" | false;
+  }
   | { type: "VISIBILITY"; colId: string; prev: boolean; next: boolean }
   | { type: "ORDER"; prev: string[]; next: string[] }
   | { type: "RESIZE"; colId: string; prev: number; next: number };

@@ -10,6 +10,7 @@ import { DataTableCardView } from './DataTableCardView'
 import { useColumnState } from './hooks/customized-table/useColumnState'
 import { usePinningOffsets } from './hooks/customized-table/usePinningOffsets'
 import { useRowSelection } from './hooks/customized-table/useRowSelection'
+import { useRowExpansion } from './hooks/customized-table/useRowExpansion'
 import { useWindowSize } from './hooks/customized-table/useWindowSize'
 import { cn } from '../../lib/utils/cn'
 import type { DataTableProps, HistoryAction } from '../../lib/types/customized-table'
@@ -35,6 +36,16 @@ export function DataTable<T>({
     showGridLines = false,
     direction = 'ltr',
     onRowClick,
+    // Row Expansion
+    enableRowExpansion = false,
+    renderExpandedRow,
+    expandedRowIds: controlledExpandedIds,
+    onExpandedChange,
+    allowMultipleExpanded = true,
+    // Visibility
+    enableToolbar = true,
+    enablePagination = true,
+    hidePaginationOnSinglePage = false,
 }: DataTableProps<T>) {
     // Merge custom slots with defaults
     const slots = useMemo(() => mergeSlots(customSlots), [customSlots])
@@ -85,6 +96,18 @@ export function DataTable<T>({
         mode: selectionMode,
         controlledSelectedIds,
         onSelectionChange,
+    })
+
+    // Row Expansion State
+    const {
+        expandedRowIds,
+        toggleRowExpansion,
+        isRowExpanded,
+        collapseAll: collapseAllRows,
+    } = useRowExpansion({
+        controlledExpandedIds,
+        onExpandedChange,
+        allowMultiple: allowMultipleExpanded,
     })
 
     // ------------------------------------------------------------------------
@@ -270,13 +293,21 @@ export function DataTable<T>({
         stripedRows,
         showGridLines,
         direction,
+        // Row Expansion
+        enableRowExpansion,
+        expandedRowIds,
+        toggleRowExpansion,
+        isRowExpanded,
+        collapseAllRows,
+        renderExpandedRow,
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }), [
         // Dependencies including history handlers...
         columns, columnState, handleColumnVisibility, handleSetColumnWidth, handleTogglePin,
         rawMoveColumn, pinningOffsets, serverData, selectedRowIds, rawSetSelectedRowIds,
         handleToggleRowSelection, handleToggleAllRows, isRowSelected, slots, enableRowSelection,
-        selectionMode, wrappedGetRowId, stickyHeader, rowDensity, stripedRows, showGridLines, direction
+        selectionMode, wrappedGetRowId, stickyHeader, rowDensity, stripedRows, showGridLines, direction,
+        enableRowExpansion, expandedRowIds, toggleRowExpansion, isRowExpanded, collapseAllRows, renderExpandedRow
     ])
 
     // Add focusTable to contextValue
@@ -321,30 +352,34 @@ export function DataTable<T>({
                     }
                 }}
             >
-                {/* Toolbar - hidden in card view */}
-                {!isCardView && <DataTableToolbar />}
+                {/* Toolbar - conditionally rendered */}
+                {!isCardView && enableToolbar && <DataTableToolbar />}
 
                 {/* Card View (Mobile) or Table View (Desktop) */}
                 {isCardView ? (
                     <DataTableCardView />
                 ) : (
-                    <div className="relative flex-1 rounded-md border border-gray-200 bg-white overflow-auto isolate min-h-100">
+                    <div className="relative flex-1 rounded-md border border-gray-200 bg-white overflow-auto isolate">
                         {/* Resize Guide Line */}
                         <div
                             id="table-resize-guide"
                             className="absolute top-0 bottom-0 w-0.5 bg-blue-600 z-9999 opacity-0 pointer-events-none transition-opacity duration-75"
                         />
-                        <Table className="w-full h-full" style={{ tableLayout: 'fixed' }}>
+                        <Table className="w-full h-full">
                             <DataTableHeader />
                             <DataTableBody />
                         </Table>
                     </div>
                 )}
 
-                {/* Pagination */}
-                <div className="shrink-0">
-                    <DataTablePagination pageSizeOptions={pageSizeOptions} />
-                </div>
+                {/* Pagination - conditionally rendered */}
+                {enablePagination && (
+                    (!hidePaginationOnSinglePage || serverData.totalCount > serverData.pageSize)
+                ) && (
+                        <div className="shrink-0">
+                            <DataTablePagination pageSizeOptions={pageSizeOptions} />
+                        </div>
+                    )}
             </div>
         </DataTableProvider>
     )

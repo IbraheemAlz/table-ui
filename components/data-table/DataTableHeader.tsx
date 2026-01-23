@@ -23,6 +23,7 @@ export function DataTableHeader() {
         setColumnWidth,
         getRowId,
         direction,
+        enableRowExpansion,
     } = useDataTable()
 
     const { Thead, Tr, Th, Checkbox } = slots
@@ -37,13 +38,27 @@ export function DataTableHeader() {
     return (
         <Thead className={cn(stickyHeader && "sticky top-0")} style={{ zIndex: 100 }}>
             <Tr className="border-b border-gray-200 bg-gray-50">
+                {/* Expand button column header - empty header for alignment */}
+                {enableRowExpansion && (
+                    <Th
+                        className="w-10 px-2 text-center bg-gray-50"
+                        style={{
+                            position: 'sticky',
+                            [isRTL ? 'right' : 'left']: 0,
+                            zIndex: Z_INDEX.stickyHeaderColumn
+                        }}
+                    >
+                        <></>
+                    </Th>
+                )}
+
                 {/* Row number / Selection column - always sticky start */}
                 {enableRowSelection && (
                     <Th
                         className="w-12 px-3 text-center bg-gray-50"
                         style={{
                             position: 'sticky',
-                            [isRTL ? 'right' : 'left']: 0,
+                            [isRTL ? 'right' : 'left']: enableRowExpansion ? 40 : 0,
                             zIndex: Z_INDEX.stickyHeaderColumn
                         }}
                     >
@@ -70,8 +85,10 @@ export function DataTableHeader() {
                             : null
 
                     const width = columnState.widths[column.id] ?? column.size
+                    const expandOffset = enableRowExpansion ? 40 : 0
+                    const selectionOffset = enableRowSelection ? 48 : 0
                     const offset = pinning === 'left'
-                        ? (pinningOffsets.left[column.id] ?? 0) + (enableRowSelection ? 48 : 0)
+                        ? (pinningOffsets.left[column.id] ?? 0) + selectionOffset + expandOffset
                         : pinning === 'right'
                             ? pinningOffsets.right[column.id]
                             : undefined
@@ -128,7 +145,7 @@ function HeaderCell({
     const canResize = column.enableResizing !== false
     const minWidth = column.minSize ?? 50
     const maxWidth = column.maxSize ?? 500
-    const defaultWidth = column.size ?? 150
+    const defaultWidth = column.size ?? 'auto'
 
     const { handleMouseDown, handleDoubleClick } = useColumnResize({
         columnId: column.id,
@@ -142,7 +159,9 @@ function HeaderCell({
     })
 
     const style: React.CSSProperties = {
-        width: width ?? defaultWidth,
+        width: 'auto',
+        minWidth: width ?? defaultWidth,
+        maxWidth: maxWidth,
         ...(pinning === 'left' && {
             position: 'sticky',
             [isRTL ? 'right' : 'left']: offset,

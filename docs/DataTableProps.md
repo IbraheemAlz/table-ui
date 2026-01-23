@@ -303,6 +303,47 @@ Callback when row is clicked
 
 Custom card renderer for mobile view
 
+## 💡 21. enableRowExpansion:
+
+Enable row expansion to show nested content (default: false)
+
+## 💡 22. renderExpandedRow:
+
+Render function for expanded content. Receives the row data and returns JSX.
+
+```ts
+<DataTable
+  enableRowExpansion
+  renderExpandedRow={(order) => (
+    <OrderItemsTable orderId={order.id} />
+  )}
+/>
+```
+
+## 💡 23. expandedRowIds:
+
+Currently expanded row IDs (controlled mode)
+
+## 💡 24. onExpandedChange:
+
+Callback when expansion state changes
+
+## 💡 25. allowMultipleExpanded:
+
+Allow multiple rows expanded at once (default: true)
+
+## 💡 26. enableToolbar:
+
+Show/hide the toolbar (search, filters, columns) (default: true)
+
+## 💡 27. enablePagination:
+
+Show/hide the bottom pagination bar (default: true)
+
+## 💡 28. hidePaginationOnSinglePage:
+
+Hide pagination if total pages <= 1 (default: false)
+
 # 2️⃣DataTable Components
 
 ## 1. DataTableToolbar:
@@ -332,6 +373,14 @@ pagination footer
 ## 8. defaults:
 
 the default components if the user didn't pass something custom (from there we are takign the current table and its tags).
+
+## 9. ExpandButton:
+
+Chevron toggle button for row expansion. Rotates 90° when expanded.
+
+## 10. ExpandedRowContent:
+
+Animated wrapper for expanded row content with left blue border accent.
 
 # 3️⃣DataTable Custom hook & helpers
 
@@ -365,6 +414,12 @@ is an undo/redo state machine that tracks actions for time-travel functionality 
 
 ### 6. useKeyboardNavigation (for DataTableBody)
 
+### 7. useRowExpansion (for DataTableBody):
+
+Manages row expansion state. Supports controlled/uncontrolled patterns and single/multiple expansion modes.
+
+`expandedRowIds`, `toggleRowExpansion`, `isRowExpanded`, `collapseAll`, `expandRows`, `expandedCount`
+
 # 4️⃣examples
 
 ## BasicTableDemo
@@ -372,3 +427,7 @@ is an undo/redo state machine that tracks actions for time-travel functionality 
 ## RTLComplexTableDemo
 
 ## InteractiveTableDemo
+
+## NestedTableDemo
+
+Demonstrates expandable rows with nested sub-tables (Orders → Order Items). Each sub-table is fully featured with independent pagination.

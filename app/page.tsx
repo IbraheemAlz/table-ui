@@ -4,9 +4,10 @@ import React, { useState } from 'react'
 import { BasicTableDemo } from '@/examples/BasicTableDemo'
 import { RTLComplexTableDemo } from '@/examples/RTLComplexTableDemo'
 import { InteractiveTableDemo } from '@/examples/InteractiveTableDemo'
+import { NestedTableDemo } from '@/examples/NestedTableDemo'
 
 export default function DemoPage() {
-  const [activeTab, setActiveTab] = useState<'basic' | 'complex' | 'interactive'>('basic')
+  const [activeTab, setActiveTab] = useState<'basic' | 'complex' | 'interactive' | 'nested'>('basic')
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
@@ -56,6 +57,17 @@ export default function DemoPage() {
             >
               3. Interactive & Selection
             </button>
+            <button
+              onClick={() => setActiveTab('nested')}
+              className={`
+                whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                ${activeTab === 'nested'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}
+              `}
+            >
+              4. Nested Tables
+            </button>
           </nav>
         </div>
 
@@ -64,6 +76,7 @@ export default function DemoPage() {
           {activeTab === 'basic' && <BasicTableDemo />}
           {activeTab === 'complex' && <RTLComplexTableDemo />}
           {activeTab === 'interactive' && <InteractiveTableDemo />}
+          {activeTab === 'nested' && <NestedTableDemo />}
         </div>
 
       </div>

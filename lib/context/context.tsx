@@ -49,6 +49,15 @@ interface DataTableContextValue<T = any> {
     showGridLines?: boolean
     direction: 'ltr' | 'rtl'
     focusTable: () => void
+
+    // Row Expansion
+    enableRowExpansion: boolean
+    expandedRowIds: Set<string>
+    toggleRowExpansion: (rowId: string) => void
+    isRowExpanded: (rowId: string) => boolean
+    collapseAllRows: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    renderExpandedRow?: (row: any) => React.ReactNode
 }
 
 // ============================================================================

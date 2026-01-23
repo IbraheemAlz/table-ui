@@ -4,7 +4,7 @@ import React from 'react'
 import { useDataTable } from '../../lib/context/context'
 import { cn } from '../../lib/utils/cn'
 import { Z_INDEX } from '../../lib/types/customized-table'
-
+import { ExpandButton } from './ExpandButton'
 import { useKeyboardNavigation } from './hooks/customized-table/useKeyboardNavigation'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -25,6 +25,12 @@ export function DataTableBody<T>() {
         setSelectedRowIds,
         toggleRowSelection,
         getRowId,
+        // Row Expansion
+        enableRowExpansion,
+        expandedRowIds,
+        toggleRowExpansion,
+        isRowExpanded,
+        renderExpandedRow,
     } = useDataTable()
 
     const {
@@ -50,13 +56,23 @@ export function DataTableBody<T>() {
 
     const { Tbody, Tr, Td, Checkbox, Skeleton } = slots
 
+    // Calculate total column count for expanded row colspan
+    const totalColumns = orderedColumns.length
+        + (enableRowSelection ? 1 : 0)
+        + (enableRowExpansion ? 1 : 0)
+
     // Loading state
     if (serverData.isLoading) {
         return (
             <Tbody>
                 {Array.from({ length: 5 }).map((_, rowIndex) => (
                     <Tr key={`skeleton-${rowIndex}`} className="border-b border-gray-200">
-                        {enableRowSelection && selectionMode === 'multiple' && (
+                        {enableRowExpansion && (
+                            <Td className="w-10 px-2">
+                                <Skeleton className="h-4 w-4" />
+                            </Td>
+                        )}
+                        {enableRowSelection && (
                             <Td className="w-12 px-3">
                                 <Skeleton className="h-4 w-4" />
                             </Td>
@@ -74,7 +90,9 @@ export function DataTableBody<T>() {
 
     // Empty state
     if (serverData.data.length === 0) {
-        const colSpan = orderedColumns.length + (enableRowSelection && selectionMode === 'multiple' ? 1 : 0)
+        const colSpan = orderedColumns.length
+            + (enableRowSelection ? 1 : 0)
+            + (enableRowExpansion ? 1 : 0)
         return (
             <Tbody>
                 <tr>
@@ -114,149 +132,206 @@ export function DataTableBody<T>() {
                 const rowId = getRowId(row)
                 const isSelected = selectedRowIds.has(rowId)
                 const isFocused = focusedRowIndex === rowIndex
+                const isExpanded = enableRowExpansion && isRowExpanded(rowId)
 
                 return (
-                    <Tr
-                        key={rowId}
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        ref={(el: any) => { rowRefs.current[rowIndex] = el }}
-                        data-state={isSelected ? 'selected' : undefined}
-                        tabIndex={isFocused ? 0 : -1}
-                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                        onKeyDown={(e: any) => handleKeyDown(e, rowIndex)}
-                        onClick={() => {
-                            if (!enableRowSelection) return
-                            handleRowClick(rowIndex)
-                            // Toggle selection on click if enabled
-                            if (selectionMode === 'multiple' || selectionMode === 'single') {
-                                toggleRowSelection(rowId)
-                            }
-                        }}
-                        className={cn(
-                            // Base styles with enhanced transitions
-                            'border-b transition-all duration-150 ease-out',
-                            'hover:bg-gray-50/50',
-                            // Focus ring
-                            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset',
-                            // Striped rows
-                            stripedRows && rowIndex % 2 !== 0 && 'bg-gray-50/50',
-                            stripedRows && rowIndex % 2 !== 0 && isSelected && 'bg-blue-50/80',
-                            // Enhanced selection styling
-                            isSelected && [
-                                'bg-gradient-to-r from-blue-50 to-transparent',
-                                'relative',
-                                // Left accent border via box-shadow (works with sticky columns)
-                                'shadow-[inset_3px_0_0_0_rgb(59,130,246)]',
-                                // Subtle glow
-                                'animate-selectionGlow',
-                            ],
-                        )}
-                    >
-                        {/* Selection checkbox / Row Number */}
-                        {enableRowSelection && selectionMode === 'multiple' && (
-                            <Td
-                                className="w-12 px-3 text-center group relative p-0"
-                                onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                                style={{
-                                    position: 'sticky',
-                                    [isRTL ? 'right' : 'left']: 0,
-                                    zIndex: Z_INDEX.stickyColumn,
-                                    backgroundColor: isSelected ? 'rgb(239 246 255)' : 'white', // blue-50 if selected
-                                }}
-                            >
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    {/* Number - hidden on hover or if selected */}
-                                    <span
-                                        className={cn(
-                                            "text-xs text-gray-500 font-medium transition-opacity",
-                                            (isSelected) ? "opacity-0" : "group-hover:opacity-0"
-                                        )}
-                                    >
-                                        {(serverData.page - 1) * serverData.pageSize + rowIndex + 1}
-                                    </span>
+                    <React.Fragment key={rowId}>
+                        <Tr
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            ref={(el: any) => { rowRefs.current[rowIndex] = el }}
+                            data-state={isSelected ? 'selected' : undefined}
+                            tabIndex={isFocused ? 0 : -1}
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onKeyDown={(e: any) => handleKeyDown(e, rowIndex)}
+                            onClick={() => {
+                                if (!enableRowSelection) return
+                                handleRowClick(rowIndex)
+                                // Toggle selection on click if enabled
+                                if (selectionMode === 'multiple' || selectionMode === 'single') {
+                                    toggleRowSelection(rowId)
+                                }
+                            }}
+                            className={cn(
+                                // Base styles with enhanced transitions
+                                'border-b transition-all duration-150 ease-out',
+                                'hover:bg-gray-50/50',
+                                // Focus ring
+                                'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset',
+                                // Striped rows
+                                stripedRows && rowIndex % 2 !== 0 && 'bg-gray-50/50',
+                                stripedRows && rowIndex % 2 !== 0 && isSelected && 'bg-blue-50/80',
+                                // Enhanced selection styling
+                                isSelected && [
+                                    'bg-gradient-to-r from-blue-50 to-transparent',
+                                    'relative',
+                                    // Left accent border via box-shadow (works with sticky columns)
+                                    'shadow-[inset_3px_0_0_0_rgb(59,130,246)]',
+                                    // Subtle glow
+                                    'animate-selectionGlow',
+                                ],
+                            )}
+                        >
+                            {/* Expand Button */}
+                            {enableRowExpansion && (
+                                <Td
+                                    className="w-10 px-2 text-center"
+                                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                                    style={{
+                                        position: 'sticky',
+                                        [isRTL ? 'right' : 'left']: 0,
+                                        zIndex: Z_INDEX.stickyColumn,
+                                        backgroundColor: isSelected ? 'rgb(239 246 255)' : 'white',
+                                    }}
+                                >
+                                    <ExpandButton
+                                        expanded={isExpanded}
+                                        onClick={() => toggleRowExpansion(rowId)}
+                                    />
+                                </Td>
+                            )}
 
-                                    {/* Checkbox - visible on hover or if selected */}
+                            {/* Selection checkbox / Row Number */}
+                            {enableRowSelection && (
+                                <Td
+                                    className="w-12 px-3 text-center group relative p-0"
+                                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                                    style={{
+                                        position: 'sticky',
+                                        [isRTL ? 'right' : 'left']: enableRowExpansion ? 40 : 0,
+                                        zIndex: Z_INDEX.stickyColumn,
+                                        backgroundColor: isSelected ? 'rgb(239 246 255)' : 'white',
+                                    }}
+                                >
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        {/* Number - always visible in single mode, or transparent in multiple */}
+                                        <span
+                                            className={cn(
+                                                "text-xs text-gray-500 font-medium transition-opacity",
+                                                (selectionMode === 'multiple' && (isSelected || "group-hover:opacity-0")) ? "opacity-0" : "opacity-100"
+                                            )}
+                                        >
+                                            {(serverData.page - 1) * serverData.pageSize + rowIndex + 1}
+                                        </span>
+
+                                        {/* Checkbox - only for multiple selection */}
+                                        {selectionMode === 'multiple' && (
+                                            <div
+                                                className={cn(
+                                                    "absolute inset-0 flex items-center justify-center transition-opacity opacity-0",
+                                                    isSelected ? "opacity-100" : "group-hover:opacity-100"
+                                                )}
+                                            >
+                                                <Checkbox
+                                                    checked={isSelected}
+                                                    onChange={() => toggleRowSelection(rowId)}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                </Td>
+                            )}
+
+                            {/* Data cells */}
+                            {orderedColumns.map((column) => {
+                                const pinning = columnState.pinning.left.includes(column.id)
+                                    ? 'left'
+                                    : columnState.pinning.right.includes(column.id)
+                                        ? 'right'
+                                        : null
+
+                                const width = columnState.widths[column.id] ?? column.size
+                                // Adjust offset for expand button column
+                                const expandOffset = enableRowExpansion ? 40 : 0
+                                const selectionOffset = enableRowSelection ? 48 : 0
+                                const offset = pinning === 'left'
+                                    ? (pinningOffsets.left[column.id] ?? 0) + selectionOffset + expandOffset
+                                    : pinning === 'right'
+                                        ? pinningOffsets.right[column.id]
+                                        : undefined
+
+                                // Get cell value
+                                let value: unknown
+                                if (column.accessorFn) {
+                                    value = column.accessorFn(row)
+                                } else if (column.accessorKey) {
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    value = (row as any)[column.accessorKey]
+                                }
+
+                                // Render cell content
+                                const content = column.cell
+                                    ? column.cell({ value, row: row, rowIndex })
+                                    : value !== null && value !== undefined
+                                        ? String(value)
+                                        : <span className="text-gray-500">—</span>
+
+                                const style: React.CSSProperties = {
+                                    width: 'auto',
+                                    minWidth: width ?? column.size ?? 50,
+                                    maxWidth: column.maxSize,
+                                    ...(pinning === 'left' && {
+                                        position: 'sticky',
+                                        [isRTL ? 'right' : 'left']: offset,
+                                        zIndex: Z_INDEX.stickyColumn,
+                                        backgroundColor: isSelected ? 'rgb(239 246 255)' : 'white',
+                                    }),
+                                    ...(pinning === 'right' && {
+                                        position: 'sticky',
+                                        [isRTL ? 'left' : 'right']: offset,
+                                        zIndex: Z_INDEX.stickyColumn,
+                                        backgroundColor: isSelected ? 'rgb(239 246 255)' : 'white',
+                                    }),
+                                    textAlign: isRTL ? 'right' : 'left',
+                                }
+
+                                return (
+                                    <Td
+                                        key={column.id}
+                                        className={cn(
+                                            densityClasses, "text-sm",
+                                            showGridLines && (isRTL ? "border-l border-gray-200 last:border-l-0" : "border-r border-gray-200 last:border-r-0"),
+                                            pinning && "bg-white"
+                                        )}
+                                        style={style}
+                                        data-column-id={column.id}
+                                    >
+                                        <div className="truncate">{content}</div>
+                                    </Td>
+                                )
+                            })}
+                        </Tr>
+
+                        {/* Expanded Row Content */}
+                        {(enableRowExpansion && renderExpandedRow) && (
+                            <tr>
+                                <td
+                                    colSpan={totalColumns}
+                                    className="p-0 border-b border-gray-200"
+                                >
                                     <div
                                         className={cn(
-                                            "absolute inset-0 flex items-center justify-center transition-opacity opacity-0",
-                                            isSelected ? "opacity-100" : "group-hover:opacity-100"
+                                            "grid transition-[grid-template-rows] duration-300 ease-in-out",
+                                            isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
                                         )}
                                     >
-                                        <Checkbox
-                                            checked={isSelected}
-                                            onChange={() => toggleRowSelection(rowId)}
-                                        />
+                                        <div className="overflow-hidden">
+                                            <div
+                                                className={cn(
+                                                    "p-4 bg-gray-50/50 border-l-4 border-blue-500 transition-opacity duration-300 delay-75",
+                                                    isExpanded ? "opacity-100" : "opacity-0"
+                                                )}
+                                            >
+                                                {renderExpandedRow(row)}
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </Td>
+                                </td>
+                            </tr>
                         )}
-
-                        {/* Data cells */}
-                        {orderedColumns.map((column) => {
-                            const pinning = columnState.pinning.left.includes(column.id)
-                                ? 'left'
-                                : columnState.pinning.right.includes(column.id)
-                                    ? 'right'
-                                    : null
-
-                            const width = columnState.widths[column.id] ?? column.size
-                            const offset = pinning === 'left'
-                                ? (pinningOffsets.left[column.id] ?? 0) + (enableRowSelection ? 48 : 0)
-                                : pinning === 'right'
-                                    ? pinningOffsets.right[column.id]
-                                    : undefined
-
-                            // Get cell value
-                            let value: unknown
-                            if (column.accessorFn) {
-                                value = column.accessorFn(row)
-                            } else if (column.accessorKey) {
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                value = (row as any)[column.accessorKey]
-                            }
-
-                            // Render cell content
-                            const content = column.cell
-                                ? column.cell({ value, row: row, rowIndex })
-                                : value !== null && value !== undefined
-                                    ? String(value)
-                                    : <span className="text-gray-500">—</span>
-
-                            const style: React.CSSProperties = {
-                                width: width ?? column.size ?? 150,
-                                ...(pinning === 'left' && {
-                                    position: 'sticky',
-                                    [isRTL ? 'right' : 'left']: offset,
-                                    zIndex: Z_INDEX.stickyColumn,
-                                    backgroundColor: isSelected ? 'rgb(239 246 255)' : 'white',
-                                }),
-                                ...(pinning === 'right' && {
-                                    position: 'sticky',
-                                    [isRTL ? 'left' : 'right']: offset,
-                                    zIndex: Z_INDEX.stickyColumn,
-                                    backgroundColor: isSelected ? 'rgb(239 246 255)' : 'white',
-                                }),
-                                textAlign: isRTL ? 'right' : 'left', // Ensure text aligns correctly
-                            }
-
-                            return (
-                                <Td
-                                    key={column.id}
-                                    className={cn(
-                                        densityClasses, "text-sm",
-                                        showGridLines && (isRTL ? "border-l border-gray-200 last:border-l-0" : "border-r border-gray-200 last:border-r-0"),
-                                        pinning && "bg-white"
-                                    )}
-                                    style={style}
-                                    data-column-id={column.id}
-                                >
-                                    <div className="truncate">{content}</div>
-                                </Td>
-                            )
-                        })}
-                    </Tr>
+                    </React.Fragment>
                 )
             })}
         </Tbody>
     )
 }
+
