@@ -133,10 +133,23 @@ export function DataTableBody<T>() {
                             }
                         }}
                         className={cn(
-                            'border-b transition-colors hover:bg-gray-50/50 data-[state=selected]:bg-gray-50',
-                            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset', // Visual focus ring
+                            // Base styles with enhanced transitions
+                            'border-b transition-all duration-150 ease-out',
+                            'hover:bg-gray-50/50',
+                            // Focus ring
+                            'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-inset',
+                            // Striped rows
                             stripedRows && rowIndex % 2 !== 0 && 'bg-gray-50/50',
-                            stripedRows && rowIndex % 2 !== 0 && isSelected && 'bg-gray-100'
+                            stripedRows && rowIndex % 2 !== 0 && isSelected && 'bg-blue-50/80',
+                            // Enhanced selection styling
+                            isSelected && [
+                                'bg-gradient-to-r from-blue-50 to-transparent',
+                                'relative',
+                                // Left accent border via box-shadow (works with sticky columns)
+                                'shadow-[inset_3px_0_0_0_rgb(59,130,246)]',
+                                // Subtle glow
+                                'animate-selectionGlow',
+                            ],
                         )}
                     >
                         {/* Selection checkbox / Row Number */}

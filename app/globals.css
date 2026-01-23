@@ -25,3 +25,55 @@ body {
   /* color: var(--foreground); */
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ============================================================================
+   DataTable Animations
+   ============================================================================ */
+
+/* Dropdown menu fade-in animation */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Selection row glow pulse */
+@keyframes selectionGlow {
+  0%, 100% {
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.5);
+  }
+}
+
+/* Checkbox check animation */
+@keyframes checkPop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Utility classes for animations */
+.animate-fadeInDown {
+  animation: fadeInDown 0.15s ease-out;
+}
+
+.animate-selectionGlow {
+  animation: selectionGlow 2s ease-in-out infinite;
+}
+
+.animate-checkPop {
+  animation: checkPop 0.2s ease-out;
+}
