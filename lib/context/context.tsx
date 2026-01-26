@@ -58,6 +58,9 @@ interface DataTableContextValue<T = any> {
     collapseAllRows: () => void
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     renderExpandedRow?: (row: any) => React.ReactNode
+
+    // Table ID for scoping
+    tableId: string
 }
 
 // ============================================================================

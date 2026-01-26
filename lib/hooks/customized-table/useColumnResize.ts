@@ -8,6 +8,7 @@ interface UseColumnResizeProps {
     maxWidth?: number
     onResizeEnd: (width: number) => void
     direction?: 'ltr' | 'rtl'
+    tableId: string // Scoped table ID
 }
 
 export function useColumnResize({
@@ -16,6 +17,7 @@ export function useColumnResize({
     maxWidth = 500,
     onResizeEnd,
     direction = 'ltr',
+    tableId,
 }: UseColumnResizeProps) {
     const isResizing = useRef(false)
     const startX = useRef(0)
@@ -29,7 +31,10 @@ export function useColumnResize({
         startX.current = e.clientX
         startWidth.current = currentWidth
 
-        const guide = document.getElementById('table-resize-guide')
+        // Track the last calculated width for accuracy on mouse up
+        let lastCalculatedWidth = currentWidth
+
+        const guide = document.getElementById(`table-resize-guide-${tableId}`)
         // Find the resizing handle's parent cell info to position guide correctly
         const headerCell = (e.target as HTMLElement).closest('th')
         const headerRect = headerCell?.getBoundingClientRect()
@@ -55,10 +60,13 @@ export function useColumnResize({
             const delta = direction === 'rtl' ? -rawDelta : rawDelta
 
             const newWidth = Math.min(maxWidth, Math.max(minWidth, startWidth.current + delta))
+            lastCalculatedWidth = newWidth
 
             // Direct DOM manipulation for fast feedback on the column itself
+            // Update both width and minWidth to ensure the style takes effect
             document.querySelectorAll(`[data-column-id="${columnId}"]`).forEach(el => {
                 (el as HTMLElement).style.width = `${newWidth}px`
+                    ; (el as HTMLElement).style.minWidth = `${newWidth}px`
             })
 
             // Update guide position
@@ -70,22 +78,17 @@ export function useColumnResize({
             }
         }
 
-        const handleMouseUp = (e: MouseEvent) => {
+        const handleMouseUp = () => {
             if (!isResizing.current) return
 
             isResizing.current = false
-
-            const rawDelta = e.clientX - startX.current
-            const delta = direction === 'rtl' ? -rawDelta : rawDelta
-
-            const finalWidth = Math.min(maxWidth, Math.max(minWidth, startWidth.current + delta))
 
             if (guide) {
                 guide.style.opacity = '0'
             }
 
-            // Update React state only on mouse up
-            onResizeEnd(finalWidth)
+            // Use the last calculated width for accuracy instead of recalculating
+            onResizeEnd(lastCalculatedWidth)
 
             document.removeEventListener('mousemove', handleMouseMove)
             document.removeEventListener('mouseup', handleMouseUp)

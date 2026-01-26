@@ -90,13 +90,10 @@ export function DataTableBody<T>() {
 
     // Empty state
     if (serverData.data.length === 0) {
-        const colSpan = orderedColumns.length
-            + (enableRowSelection ? 1 : 0)
-            + (enableRowExpansion ? 1 : 0)
         return (
             <Tbody>
                 <tr>
-                    <td colSpan={colSpan} className="py-16 text-center">
+                    <td colSpan={totalColumns} className="py-16 text-center">
                         <div className="flex flex-col items-center gap-3">
                             <div className="h-14 w-14 rounded-full bg-gray-100 flex items-center justify-center">
                                 <svg className="h-7 w-7 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -231,7 +228,7 @@ export function DataTableBody<T>() {
                                 </Td>
                             )}
 
-                            {/* Data cells */}
+                            {/* Data columns */}
                             {orderedColumns.map((column) => {
                                 const pinning = columnState.pinning.left.includes(column.id)
                                     ? 'left'
@@ -239,8 +236,13 @@ export function DataTableBody<T>() {
                                         ? 'right'
                                         : null
 
-                                const width = columnState.widths[column.id] ?? column.size
-                                // Adjust offset for expand button column
+                                // Flexible Width Logic to match Header
+                                const isResized = columnState.widths[column.id] !== undefined
+                                const isPinned = !!pinning
+                                const width = (isPinned || isResized)
+                                    ? (columnState.widths[column.id] ?? column.size)
+                                    : undefined
+
                                 const expandOffset = enableRowExpansion ? 40 : 0
                                 const selectionOffset = enableRowSelection ? 48 : 0
                                 const offset = pinning === 'left'
@@ -266,7 +268,7 @@ export function DataTableBody<T>() {
                                         : <span className="text-gray-500">—</span>
 
                                 const style: React.CSSProperties = {
-                                    width: 'auto',
+                                    width: width ?? 'auto',
                                     minWidth: width ?? column.size ?? 50,
                                     maxWidth: column.maxSize,
                                     ...(pinning === 'left' && {

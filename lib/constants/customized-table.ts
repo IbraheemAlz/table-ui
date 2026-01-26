@@ -4,5 +4,5 @@ export const Z_INDEX = {
     header: 20,
     stickyHeaderColumn: 30,
     resizeHandle: 40,
-    dropdown: 50,
+    dropdown: 9999,
 };

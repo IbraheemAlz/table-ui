@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useEffect, useCallback, useRef } from 'react'
+import React, { useMemo, useEffect, useCallback, useRef } from 'react'
 import { DataTableProvider, mergeSlots } from '../../lib/context/context'
 import { DataTableHeader } from './DataTableHeader'
 import { DataTableBody } from './DataTableBody'
@@ -268,6 +268,9 @@ export function DataTable<T>({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedRowIds, serverData.data, rawToggleAllRows, history])
 
+    // Generate unique ID for this table instance
+    const tableId = React.useId()
+
     // Context value
     const contextValue = useMemo(() => ({
         columns,
@@ -300,14 +303,16 @@ export function DataTable<T>({
         isRowExpanded,
         collapseAllRows,
         renderExpandedRow,
+        tableId, // Scoping ID
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }), [
-        // Dependencies including history handlers...
+        // Dependencies
         columns, columnState, handleColumnVisibility, handleSetColumnWidth, handleTogglePin,
         rawMoveColumn, pinningOffsets, serverData, selectedRowIds, rawSetSelectedRowIds,
         handleToggleRowSelection, handleToggleAllRows, isRowSelected, slots, enableRowSelection,
         selectionMode, wrappedGetRowId, stickyHeader, rowDensity, stripedRows, showGridLines, direction,
-        enableRowExpansion, expandedRowIds, toggleRowExpansion, isRowExpanded, collapseAllRows, renderExpandedRow
+        enableRowExpansion, expandedRowIds, toggleRowExpansion, isRowExpanded, collapseAllRows, renderExpandedRow,
+        tableId
     ])
 
     // Add focusTable to contextValue
@@ -360,12 +365,12 @@ export function DataTable<T>({
                     <DataTableCardView />
                 ) : (
                     <div className="relative flex-1 rounded-md border border-gray-200 bg-white overflow-auto isolate">
-                        {/* Resize Guide Line */}
+                        {/* Resize Guide Line - Scoped by ID */}
                         <div
-                            id="table-resize-guide"
+                            id={`table-resize-guide-${tableId}`}
                             className="absolute top-0 bottom-0 w-0.5 bg-blue-600 z-9999 opacity-0 pointer-events-none transition-opacity duration-75"
                         />
-                        <Table className="w-full h-full">
+                        <Table className="w-full h-full min-w-full">
                             <DataTableHeader />
                             <DataTableBody />
                         </Table>

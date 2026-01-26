@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { cn } from '../../lib/utils/cn'
 import { DataTableSlots } from 'customized-table'
 
@@ -14,12 +15,69 @@ const MenuCloseContext = React.createContext<(() => void) | null>(null)
 // Simple dropdown menu using native HTML
 const DefaultColumnMenu: DataTableSlots['ColumnMenu'] = ({ trigger, children, align = 'start' }) => {
     const [open, setOpen] = useState(false)
+    const [menuPosition, setMenuPosition] = useState<{ top: number; left: number; maxHeight: number } | null>(null)
     const menuRef = useRef<HTMLDivElement>(null)
     const triggerRef = useRef<HTMLDivElement>(null)
+    const dropdownRef = useRef<HTMLDivElement>(null)
+
+    const updatePosition = useCallback(() => {
+        if (open && triggerRef.current) {
+            const triggerRect = triggerRef.current.getBoundingClientRect()
+            const scrollX = window.scrollX
+            const scrollY = window.scrollY
+            const viewportHeight = window.innerHeight
+            const viewportWidth = window.innerWidth
+
+            // Calculate available space below and above the trigger
+            const spaceBelow = viewportHeight - triggerRect.bottom - 8 // 8px margin
+            const spaceAbove = triggerRect.top - 8
+
+            // Determine max height based on available space (use more generous limit)
+            const maxHeight = Math.max(spaceBelow, spaceAbove, 200)
+
+            // Calculate left position based on alignment
+            let left = align === 'end'
+                ? triggerRect.right - 160 // min-width of dropdown
+                : triggerRect.left
+
+            // Adjust left to ensure it doesn't go off-screen
+            left = Math.max(8, Math.min(left, viewportWidth - 168))
+
+            setMenuPosition({
+                top: triggerRect.bottom + 4 + scrollY, // Absolute position including scroll
+                left: left + scrollX,
+                maxHeight
+            })
+        }
+    }, [open, align])
+
+    // Initial position
+    useEffect(() => {
+        updatePosition()
+    }, [updatePosition])
+
+    // Update position on scroll/resize to keep attached
+    useEffect(() => {
+        if (!open) return
+
+        const handleScrollOrResize = () => {
+            updatePosition()
+        }
+
+        window.addEventListener('scroll', handleScrollOrResize, { capture: true })
+        window.addEventListener('resize', handleScrollOrResize)
+
+        return () => {
+            window.removeEventListener('scroll', handleScrollOrResize, { capture: true })
+            window.removeEventListener('resize', handleScrollOrResize)
+        }
+    }, [open, updatePosition])
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node) && !triggerRef.current?.contains(e.target as Node)) {
+            if (menuRef.current && !menuRef.current.contains(e.target as Node) &&
+                !triggerRef.current?.contains(e.target as Node) &&
+                !dropdownRef.current?.contains(e.target as Node)) {
                 setOpen(false)
             }
         }
@@ -45,19 +103,26 @@ const DefaultColumnMenu: DataTableSlots['ColumnMenu'] = ({ trigger, children, al
             >
                 {trigger}
             </div>
-            {open && (
+            {open && menuPosition && createPortal(
                 <div
+                    ref={dropdownRef}
                     className={cn(
-                        "absolute top-full mt-1 min-w-[160px] bg-white border border-gray-200 rounded-md shadow-lg py-1",
-                        "animate-fadeInDown", // Smooth dropdown animation
-                        align === 'end' ? 'right-0' : 'left-0'
+                        "absolute min-w-[160px] bg-white border border-gray-200 rounded-md shadow-lg py-1",
+                        "overflow-y-auto",
+                        "animate-fadeInDown" // Smooth dropdown animation
                     )}
-                    style={{ zIndex: 9999 }}
+                    style={{
+                        zIndex: 9999,
+                        top: menuPosition.top,
+                        left: menuPosition.left,
+                        maxHeight: menuPosition.maxHeight
+                    }}
                 >
                     <MenuCloseContext.Provider value={closeMenu}>
                         {children}
                     </MenuCloseContext.Provider>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     )

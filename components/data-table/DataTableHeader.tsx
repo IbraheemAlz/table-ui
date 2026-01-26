@@ -84,7 +84,18 @@ export function DataTableHeader() {
                             ? 'right'
                             : null
 
-                    const width = columnState.widths[column.id] ?? column.size
+                    // Flexible Width Logic:
+                    // - Pinned columns: ALWAYS fixed width (required for offsets).
+                    // - Resized columns: ALWAYS fixed width (user intent).
+                    // - Unpinned & Unresized: 'auto' width (fill remaining space).
+                    const isResized = columnState.widths[column.id] !== undefined
+                    const isPinned = !!pinning
+
+                    // If pinned or resized, use the specific width. Otherwise undefined (auto)
+                    const width = (isPinned || isResized)
+                        ? (columnState.widths[column.id] ?? column.size)
+                        : undefined
+
                     const expandOffset = enableRowExpansion ? 40 : 0
                     const selectionOffset = enableRowSelection ? 48 : 0
                     const offset = pinning === 'left'
@@ -130,7 +141,7 @@ function HeaderCell({
     onWidthChange: (width: number) => void
     isRTL: boolean
 }) {
-    const { slots, rowDensity, showGridLines } = useDataTable()
+    const { slots, rowDensity, showGridLines, tableId } = useDataTable()
     const { Th } = slots
 
     const densityHeight = {
@@ -145,7 +156,7 @@ function HeaderCell({
     const canResize = column.enableResizing !== false
     const minWidth = column.minSize ?? 50
     const maxWidth = column.maxSize ?? 500
-    const defaultWidth = column.size ?? 'auto'
+    const defaultWidth = column.size ?? 150
 
     const { handleMouseDown, handleDoubleClick } = useColumnResize({
         columnId: column.id,
@@ -156,11 +167,12 @@ function HeaderCell({
             onWidthChange(w)
         },
         direction: isRTL ? 'rtl' : 'ltr',
+        tableId, // Pass scoped tableId
     })
 
     const style: React.CSSProperties = {
-        width: 'auto',
-        minWidth: width ?? defaultWidth,
+        width: width ?? 'auto',
+        minWidth: width ?? minWidth, // Strict if fixed, else minSize
         maxWidth: maxWidth,
         ...(pinning === 'left' && {
             position: 'sticky',
@@ -198,7 +210,10 @@ function HeaderCell({
                     className={isRTL ? "left-0" : "right-0"}
                     onMouseDown={(e) => {
                         setIsResizing(true)
-                        handleMouseDown(e, width ?? defaultWidth)
+                        // Get actual computed width from DOM for accuracy
+                        const headerCell = (e.target as HTMLElement).closest('th')
+                        const actualWidth = headerCell ? headerCell.getBoundingClientRect().width : (width ?? defaultWidth)
+                        handleMouseDown(e, actualWidth)
                     }}
                     onDoubleClick={(e) => handleDoubleClick(e, column.size)}
                 />
