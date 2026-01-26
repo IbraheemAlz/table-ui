@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState, useCallback, useMemo } from 'react'
-import { DataTable, type ColumnDef, type ServerDataConfig } from '@/components/data-table'
+import React, { useState, useMemo } from 'react'
+import { DataTable } from '@/components/data-table'
+import { ColumnDef, ServerDataConfig } from 'customized-table'
 
 // Simplified User type
 interface User {
@@ -12,7 +13,7 @@ interface User {
     status: 'active' | 'inactive'
 }
 
-// Generate smaller dataset
+//🍎🍎🍎🍎 Generate smaller dataset
 function generateUsers(count: number): User[] {
     return Array.from({ length: count }, (_, i) => ({
         id: `user-${i + 1}`,
@@ -25,6 +26,7 @@ function generateUsers(count: number): User[] {
 
 const allUsers = generateUsers(50)
 
+//🍎🍎🍎🍎 set columns headers
 const columns: ColumnDef<User>[] = [
     { id: 'name', header: 'Name', accessorKey: 'name', size: 180 },
     { id: 'email', header: 'Email', accessorKey: 'email', size: 220 },
@@ -44,14 +46,15 @@ const columns: ColumnDef<User>[] = [
 ]
 
 export function BasicTableDemo() {
+    //🍎🍎🍎🍎 api query params
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(10)
     const [sortColumn, setSortColumn] = useState<string | undefined>()
     const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | undefined>()
 
-    // Client-side processing
+    //🍎🍎🍎🍎 Client-side sorting handling (it will be replace the backend logic)
     const processedData = useMemo(() => {
-        let data = [...allUsers]
+        const data = [...allUsers]
         if (sortColumn && sortDirection) {
             data.sort((a, b) => {
                 const aVal = a[sortColumn as keyof User]
@@ -64,11 +67,13 @@ export function BasicTableDemo() {
         return data
     }, [sortColumn, sortDirection])
 
+    //🍎🍎🍎🍎 Client-side pagination handling (it will be replace the backend logic)
     const paginatedData = useMemo(() => {
         const start = (page - 1) * pageSize
         return processedData.slice(start, start + pageSize)
     }, [processedData, page, pageSize])
 
+    //🍎🍎🍎🍎 final passed object to the Table Shared component
     const serverData: ServerDataConfig<User> = {
         data: paginatedData,
         totalCount: processedData.length,
@@ -90,7 +95,7 @@ export function BasicTableDemo() {
                     Ideal for simple data management lists.
                 </p>
             </div>
-            <div className="border rounded-lg shadow-sm bg-white overflow-hidden">
+            <div className="rounded-lg shadow-sm bg-white overflow-hidden">
                 <DataTable
                     columns={columns}
                     serverData={serverData}

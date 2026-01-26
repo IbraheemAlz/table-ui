@@ -1,11 +1,10 @@
 'use client'
 
-import React from 'react'
-import { useDataTable } from './context'
-import type { ColumnDef } from './types'
-import { Icons } from './icons'
+import { Icon } from '@iconify/react'
+import { useDataTable } from '../../lib/context/context'
 
 interface ColumnMenuProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     column: any // Typed as any for now to avoid complexity with generics
     align?: 'start' | 'end'
 }
@@ -55,8 +54,8 @@ export function ColumnMenu({ column, align = 'start' }: ColumnMenuProps) {
                     <span className="text-xs font-medium text-gray-600 truncate flex-1">
                         {headerText}
                     </span>
-                    {currentSort === 'asc' && <Icons.ArrowUp className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
-                    {currentSort === 'desc' && <Icons.ArrowDown className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
+                    {currentSort === 'asc' && <Icon icon="lucide:chevron-up" className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
+                    {currentSort === 'desc' && <Icon icon="lucide:chevron-down" className="h-3.5 w-3.5 text-blue-600 shrink-0" />}
                 </div>
             }
             align={align}
@@ -66,14 +65,14 @@ export function ColumnMenu({ column, align = 'start' }: ColumnMenuProps) {
                 <>
                     <MenuItem
                         onClick={() => handleSort('asc')}
-                        icon={<Icons.ArrowUp className="h-4 w-4" />}
+                        icon={<Icon icon="lucide:chevron-up" className="h-4 w-4" />}
                         active={currentSort === 'asc'}
                     >
                         Sort ascending
                     </MenuItem>
                     <MenuItem
                         onClick={() => handleSort('desc')}
-                        icon={<Icons.ArrowDown className="h-4 w-4" />}
+                        icon={<Icon icon="lucide:chevron-down" className="h-4 w-4" />}
                         active={currentSort === 'desc'}
                     >
                         Sort descending
@@ -87,14 +86,14 @@ export function ColumnMenu({ column, align = 'start' }: ColumnMenuProps) {
                 <>
                     <MenuItem
                         onClick={() => toggleColumnPin(column.id, currentPinning === 'left' ? false : 'left')}
-                        icon={<Icons.Pin className="h-4 w-4 rotate-[-45deg]" />}
+                        icon={<Icon icon="lucide:pin" className="h-4 w-4 rotate-[-45deg]" />}
                         active={currentPinning === 'left'}
                     >
                         {currentPinning === 'left' ? 'Unpin from left' : 'Pin to left'}
                     </MenuItem>
                     <MenuItem
                         onClick={() => toggleColumnPin(column.id, currentPinning === 'right' ? false : 'right')}
-                        icon={<Icons.Pin className="h-4 w-4 rotate-45" />}
+                        icon={<Icon icon="lucide:pin" className="h-4 w-4 rotate-45" />}
                         active={currentPinning === 'right'}
                     >
                         {currentPinning === 'right' ? 'Unpin from right' : 'Pin to right'}
@@ -106,25 +105,25 @@ export function ColumnMenu({ column, align = 'start' }: ColumnMenuProps) {
             {/* Reordering */}
             <MenuItem
                 onClick={() => moveColumn(column.id, 'left')}
-                icon={<Icons.MoveLeft className="h-4 w-4" />}
+                icon={<Icon icon="lucide:move-left" className="h-4 w-4" />}
             >
                 Move left
             </MenuItem>
             <MenuItem
                 onClick={() => moveColumn(column.id, 'right')}
-                icon={<Icons.MoveRight className="h-4 w-4" />}
+                icon={<Icon icon="lucide:move-right" className="h-4 w-4" />}
             >
                 Move right
             </MenuItem>
             <MenuItem
                 onClick={() => moveColumn(column.id, 'start')}
-                icon={<Icons.ArrowLeftToLine className="h-4 w-4" />}
+                icon={<Icon icon="lucide:arrow-left-to-line" className="h-4 w-4" />}
             >
                 Move to start
             </MenuItem>
             <MenuItem
                 onClick={() => moveColumn(column.id, 'end')}
-                icon={<Icons.ArrowRightToLine className="h-4 w-4" />}
+                icon={<Icon icon="lucide:arrow-right-to-line" className="h-4 w-4" />}
             >
                 Move to end
             </MenuItem>
@@ -137,7 +136,7 @@ export function ColumnMenu({ column, align = 'start' }: ColumnMenuProps) {
                         setColumnVisibility(column.id, false)
                         focusTable() // Restore focus to table since this column will disappear
                     }}
-                    icon={<Icons.EyeOff className="h-4 w-4" />}
+                    icon={<Icon icon="lucide:eye-off" className="h-4 w-4" />}
                 >
                     Hide column
                 </MenuItem>

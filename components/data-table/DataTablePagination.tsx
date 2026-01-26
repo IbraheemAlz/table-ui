@@ -1,16 +1,14 @@
 'use client'
 
-import React from 'react'
-import { useDataTable } from './context'
-import { cn } from './utils/cn'
-import { Icons } from './icons'
+import { Icon } from '@iconify/react'
+import { useDataTable } from '../../lib/context/context'
 
 interface DataTablePaginationProps {
     pageSizeOptions?: number[]
 }
 
 export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: DataTablePaginationProps) {
-    const { serverData, slots, selectedRowIds } = useDataTable()
+    const { serverData, slots } = useDataTable()
     const { Button } = slots
 
     const { page, pageSize, totalCount, onPageChange, onPageSizeChange } = serverData
@@ -20,15 +18,9 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
     const canGoNext = page < totalPages
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t border-gray-200">
-            {/* Selection info */}
-            <div className="text-sm text-gray-500">
-                {selectedRowIds.size > 0 ? (
-                    <span>{selectedRowIds.size} row(s) selected</span>
-                ) : (
-                    <span>{totalCount} total row(s)</span>
-                )}
-            </div>
+        <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 px-4 py-3 border-t border-gray-200">
+
+            <div />
 
             <div className="flex items-center gap-6">
                 {/* Page size selector */}
@@ -61,7 +53,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoPrevious}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronsLeft className="h-4 w-4" />
+                        <Icon icon="lucide:chevrons-left" className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
@@ -70,7 +62,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoPrevious}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronLeft className="h-4 w-4" />
+                        <Icon icon="lucide:chevron-left" className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
@@ -79,7 +71,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoNext}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronRight className="h-4 w-4" />
+                        <Icon icon="lucide:chevron-right" className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
@@ -88,7 +80,7 @@ export function DataTablePagination({ pageSizeOptions = [10, 20, 50, 100] }: Dat
                         disabled={!canGoNext}
                         className="h-8 w-8 p-0"
                     >
-                        <Icons.ChevronsRight className="h-4 w-4" />
+                        <Icon icon="lucide:chevrons-right" className="h-4 w-4" />
                     </Button>
                 </div>
             </div>

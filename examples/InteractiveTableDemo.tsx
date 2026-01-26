@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useState } from 'react'
-import { DataTable, FloatingActionBar, type ColumnDef, type ServerDataConfig } from '@/components/data-table'
+import { useState } from 'react'
+import { DataTable, FloatingActionBar } from '@/components/data-table'
+import { ColumnDef, ServerDataConfig } from 'customized-table'
 
 interface Product {
     id: string
@@ -125,7 +126,7 @@ export function InteractiveTableDemo() {
                 </button>
             </FloatingActionBar>
 
-            <div className="border rounded-lg shadow-sm bg-white overflow-hidden">
+            <div className="rounded-lg shadow-sm bg-white overflow-hidden">
                 <DataTable
                     columns={columns}
                     serverData={serverData}

@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { createPortal } from 'react-dom'
-import { cn } from './utils/cn'
+import { cn } from '../../lib/utils/cn'
 
 interface FloatingActionBarProps {
     /** Number of selected items */

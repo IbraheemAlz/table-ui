@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { cn } from './utils/cn'
-import type { DataTableSlots } from './types'
+import { cn } from '../../lib/utils/cn'
+import { DataTableSlots } from 'customized-table'
 
 // ============================================================================
 // Default Slot Implementations (Native HTML)
@@ -49,6 +49,7 @@ const DefaultColumnMenu: DataTableSlots['ColumnMenu'] = ({ trigger, children, al
                 <div
                     className={cn(
                         "absolute top-full mt-1 min-w-[160px] bg-white border border-gray-200 rounded-md shadow-lg py-1",
+                        "animate-fadeInDown", // Smooth dropdown animation
                         align === 'end' ? 'right-0' : 'left-0'
                     )}
                     style={{ zIndex: 9999 }}
@@ -139,7 +140,10 @@ const DefaultButton: DataTableSlots['Button'] = ({
         onClick={onClick}
         disabled={disabled}
         className={cn(
-            "inline-flex items-center justify-center rounded-md font-medium transition-colors",
+            "inline-flex items-center justify-center rounded-md font-medium",
+            // Enhanced transitions
+            "transition-all duration-150 ease-out",
+            "hover:scale-[1.02] active:scale-[0.98]",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
             // Variants
             variant === 'default' && "bg-gray-900 text-white hover:bg-gray-800",
@@ -149,8 +153,8 @@ const DefaultButton: DataTableSlots['Button'] = ({
             size === 'sm' && "h-8 px-3 text-xs",
             size === 'md' && "h-9 px-4 text-sm",
             size === 'lg' && "h-10 px-6 text-base",
-            // Disabled
-            disabled && "opacity-50 cursor-not-allowed",
+            // Disabled - no hover effects
+            disabled && "opacity-50 cursor-not-allowed hover:scale-100",
             className
         )}
     >
@@ -168,17 +172,21 @@ const DefaultCheckbox: DataTableSlots['Checkbox'] = ({ checked, onChange, indete
     }, [indeterminate])
 
     return (
-        <input
-            ref={ref}
-            type="checkbox"
-            checked={checked}
-            onChange={(e) => onChange(e.target.checked)}
-            disabled={disabled}
-            className={cn(
-                "h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500",
-                disabled && "opacity-50 cursor-not-allowed"
-            )}
-        />
+        <div className={cn("inline-flex", checked && "animate-checkPop")}>
+            <input
+                ref={ref}
+                type="checkbox"
+                checked={checked}
+                onChange={(e) => onChange(e.target.checked)}
+                disabled={disabled}
+                className={cn(
+                    "h-4 w-4 rounded border-gray-300 text-blue-600",
+                    "transition-all duration-150",
+                    "focus:ring-2 focus:ring-blue-500 focus:ring-offset-1",
+                    disabled && "opacity-50 cursor-not-allowed"
+                )}
+            />
+        </div>
     )
 }
 

@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { ServerDataConfig } from '../types'
 
 interface UseKeyboardNavigationProps<T> {
     data: T[]

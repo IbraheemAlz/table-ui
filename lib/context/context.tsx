@@ -1,13 +1,14 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import type { ColumnDef, DataTableSlots, ColumnState, PinningOffsets, ServerDataConfig, RowHeight } from './types'
-import { defaultSlots } from './defaults'
+import { defaultSlots } from '../../components/data-table/defaults'
+import { ColumnDef, ColumnState, DataTableSlots, PinningOffsets, RowHeight, ServerDataConfig } from 'customized-table';
 
 // ============================================================================
 // Context Types
 // ============================================================================
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface DataTableContextValue<T = any> {
     // Column definitions
     columns: ColumnDef<T>[]
@@ -48,6 +49,15 @@ interface DataTableContextValue<T = any> {
     showGridLines?: boolean
     direction: 'ltr' | 'rtl'
     focusTable: () => void
+
+    // Row Expansion
+    enableRowExpansion: boolean
+    expandedRowIds: Set<string>
+    toggleRowExpansion: (rowId: string) => void
+    isRowExpanded: (rowId: string) => boolean
+    collapseAllRows: () => void
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    renderExpandedRow?: (row: any) => React.ReactNode
 }
 
 // ============================================================================
@@ -70,6 +80,7 @@ export function DataTableProvider<T>({
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function useDataTable<T = any>(): DataTableContextValue<T> {
     const context = useContext(DataTableContext)
     if (!context) {

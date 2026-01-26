@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { cn } from './utils/cn'
-import { Z_INDEX } from './types'
+import { cn } from '../../lib/utils/cn'
+import { Z_INDEX } from '@/lib/constants/customized-table'
 
 interface ResizeHandleProps {
     onMouseDown: (e: React.MouseEvent) => void

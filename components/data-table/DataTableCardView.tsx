@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { useDataTable } from './context'
-import { cn } from './utils/cn'
+import { useDataTable } from '../../lib/context/context'
+import { cn } from '../../lib/utils/cn'
 
 export function DataTableCardView() {
     const {
@@ -50,7 +50,7 @@ export function DataTableCardView() {
             <Card className="p-8">
                 <div className="flex flex-col items-center justify-center text-center">
                     <div className="h-12 w-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
-                        <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                         </svg>
                     </div>
@@ -103,6 +103,7 @@ export function DataTableCardView() {
                                 if (column.accessorFn) {
                                     value = column.accessorFn(row)
                                 } else if (column.accessorKey) {
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                     value = (row as any)[column.accessorKey]
                                 }
 
@@ -111,7 +112,7 @@ export function DataTableCardView() {
                                     ? column.cell({ value, row, rowIndex })
                                     : value !== null && value !== undefined
                                         ? String(value)
-                                        : <span className="text-gray-400">—</span>
+                                        : <span className="text-gray-500">—</span>
 
                                 const headerText = typeof column.header === 'string'
                                     ? column.header
