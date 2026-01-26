@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { DataTable, type ColumnDef, type ServerDataConfig, type RowHeight } from '@/components/data-table'
+import { DataTable } from '@/components/data-table'
+import { ColumnDef, RowHeight, ServerDataConfig } from 'customized-table'
 
 interface Employee {
     id: string

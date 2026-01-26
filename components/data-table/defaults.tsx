@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { cn } from '../../lib/utils/cn'
-import type { DataTableSlots } from '../../lib/types/customized-table'
+import { DataTableSlots } from 'customized-table'
 
 // ============================================================================
 // Default Slot Implementations (Native HTML)

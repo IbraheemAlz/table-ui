@@ -4,9 +4,9 @@ import React, { useState } from 'react'
 import { useDataTable } from '../../lib/context/context'
 import { ColumnMenu } from './ColumnMenu'
 import { ResizeHandle } from './ResizeHandle'
-import { useColumnResize } from './hooks/customized-table/useColumnResize'
+import { useColumnResize } from '../../lib/hooks/customized-table/useColumnResize'
 import { cn } from '../../lib/utils/cn'
-import { Z_INDEX } from '../../lib/types/customized-table'
+import { Z_INDEX } from '@/lib/constants/customized-table'
 
 export function DataTableHeader() {
     const {

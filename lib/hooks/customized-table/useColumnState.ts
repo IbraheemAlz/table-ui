@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
+import { ColumnDef, ColumnState, ViewState } from 'customized-table'
 import { useState, useCallback, useMemo } from 'react'
-import type { ColumnDef, ColumnState, ViewState } from '../../../../lib/types/customized-table'
 
 interface UseColumnStateProps {
     columns: ColumnDef<any>[]

@@ -3,9 +3,9 @@
 import React from 'react'
 import { useDataTable } from '../../lib/context/context'
 import { cn } from '../../lib/utils/cn'
-import { Z_INDEX } from '../../lib/types/customized-table'
 import { ExpandButton } from './ExpandButton'
-import { useKeyboardNavigation } from './hooks/customized-table/useKeyboardNavigation'
+import { useKeyboardNavigation } from '../../lib/hooks/customized-table/useKeyboardNavigation'
+import { Z_INDEX } from '@/lib/constants/customized-table'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function DataTableBody<T>() {

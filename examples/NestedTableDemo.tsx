@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { DataTable } from "@/components/data-table";
-import type { ColumnDef, ServerDataConfig } from "@/lib/types/customized-table";
+import { ColumnDef, ServerDataConfig } from "customized-table";
 
 // ============================================================================
 // Type Definitions

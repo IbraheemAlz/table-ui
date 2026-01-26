@@ -1,7 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { DataTable, FloatingActionBar, type ColumnDef, type ServerDataConfig } from '@/components/data-table'
+import { DataTable, FloatingActionBar } from '@/components/data-table'
+import { ColumnDef, ServerDataConfig } from 'customized-table'
 
 interface Product {
     id: string

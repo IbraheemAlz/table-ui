@@ -1,8 +1,8 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import type { ColumnDef, DataTableSlots, ColumnState, PinningOffsets, ServerDataConfig, RowHeight } from '../types/customized-table'
 import { defaultSlots } from '../../components/data-table/defaults'
+import { ColumnDef, ColumnState, DataTableSlots, PinningOffsets, RowHeight, ServerDataConfig } from 'customized-table';
 
 // ============================================================================
 // Context Types
